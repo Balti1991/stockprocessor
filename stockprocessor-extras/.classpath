@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/ta-lib"/>
+	<classpathentry kind="src" path="src/gui"/>
+	<classpathentry kind="src" path="src/cli"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/importer"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stockprocessor"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stockprocessor-gui"/>
+	<classpathentry kind="lib" path="lib/commons-cli.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/ta-lib-0.4.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

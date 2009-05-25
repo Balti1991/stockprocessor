@@ -1,0 +1,12 @@
+#summary StockProcessor
+
+= Introduction =
+
+Start page of StockProcessor
+
+
+= Details =
+
+Topics:
+ * TODO-s
+ * roadmap

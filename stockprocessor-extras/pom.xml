@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>stockprocessor</groupId>
+  <artifactId>stockprocessor-extras</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Stock Processor extra class implementations</description>
+  <repositories>
+  	<repository>
+  		<id>activequant.org</id>
+  		<name>activequant.org</name>
+  		<url>http://activequant.org/m2/external</url>
+  	</repository>
+  </repositories>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.ta-lib</groupId>
+  		<artifactId>ta-lib</artifactId>
+  		<version>0.4.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>stockprocessor</groupId>
+  		<artifactId>stockprocessor-gui</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
+</project>

@@ -11,7 +11,7 @@ The main aim of project is an analyzer automat which can run continously or shed
 
 = Parts =
 * base library: the main elements and interfaces for processing and some helper abstract classes.
-** API: the interfaces for external programs end extension libraryes
-** common: helper and base classes
+# API: the interfaces for external programs end extension libraryes
+# common: helper and base classes
 * GUI: the visualiser library for the base
 * extensions: tools and implementations to realworld use. it contains importer implementations and calculator library

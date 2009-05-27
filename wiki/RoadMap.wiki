@@ -1,0 +1,13 @@
+#summary Ideas, aims some conceptions to project
+
+= Introduction =
+
+This is not exactly a road-map, because the project is in very early state, so we only put some aims and good ideas to be followed
+
+
+= Details =
+
+
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages

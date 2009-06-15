@@ -3,10 +3,10 @@
  */
 package stockprocessor.processor;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,18 +16,22 @@ import stockprocessor.data.CandleStockData;
 import stockprocessor.data.StockData;
 import stockprocessor.data.information.DefaultRangeParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.processor.StockDataProcessor;
 
 /**
  * @author anti
  */
 public class CandleCollectorStockDataProcessor implements StockDataProcessor<StockData<Integer>>
 {
+	/**
+	 * 
+	 */
+	private static final String CANDLE_WIDTH_PARAMETER_NAME = "Candle width";
+
 	public static final String CANDLE_DATA_NAME = "Candle data";
 
 	private static final Log log = LogFactory.getLog(CandleCollectorStockDataProcessor.class);
 
-	public static final ParameterInformation<Long> candleWidthParameter = new DefaultRangeParameterInformation<Long>("Candle width",
+	public static final ParameterInformation<Long> candleWidthParameter = new DefaultRangeParameterInformation<Long>(CANDLE_WIDTH_PARAMETER_NAME,
 			1l * 60 * 60 * 24, 1l, Long.MAX_VALUE, 1l, 1l);
 
 	@SuppressWarnings("unchecked")
@@ -38,7 +42,7 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 	}
 
 	// parameter
-	private final long candleWidth;
+	private long candleWidth;
 
 	// tmp candle
 	private Candle candle;
@@ -54,9 +58,9 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 	/**
 	 * @param candleWidth in milliseconds
 	 */
-	public CandleCollectorStockDataProcessor(long candleWidth)
+	public CandleCollectorStockDataProcessor()
 	{
-		this.candleWidth = candleWidth;
+		this.candleWidth = candleWidthParameter.getDefaultValue();
 	}
 
 	/*
@@ -169,6 +173,21 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 	public List<ParameterInformation> getOptionalInputParameterInformations()
 	{
 		return optionalInputParameters;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @seestockprocessor.processor.StockDataProcessor#
+	 * setOptionalInputParameterInformations(java.util.Map)
+	 */
+	@Override
+	public void setOptionalInputParameterInformations(Map<String, Object> optInputParameters)
+	{
+		Object object = optInputParameters.get(CANDLE_WIDTH_PARAMETER_NAME);
+		if (object != null)
+		{
+			this.candleWidth = (Long) object;
+		}
 	}
 
 	/*

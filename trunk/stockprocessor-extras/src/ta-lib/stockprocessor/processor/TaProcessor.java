@@ -3,15 +3,14 @@
  */
 package stockprocessor.processor;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.StockData;
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.processor.StockDataProcessor;
 
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
@@ -372,5 +371,17 @@ public class TaProcessor implements StockDataProcessor<StockData<?>>
 				throw new IllegalArgumentException(); // TODO: message
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @seestockprocessor.processor.StockDataProcessor#
+	 * setOptionalInputParameterInformations(java.util.Map)
+	 */
+	@Override
+	public void setOptionalInputParameterInformations(Map<String, Object> optInputParameters)
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

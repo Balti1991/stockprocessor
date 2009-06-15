@@ -3,14 +3,10 @@
  */
 package stockprocessor.processor;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
-import stockprocessor.processor.CandleCollectorStockDataProcessor;
-import stockprocessor.processor.StockDataProcessor;
 
 /**
  * @author anti
@@ -35,7 +31,7 @@ public class CandleDataProcessorManager extends ProcessorManager
 	public StockDataProcessor<?> getInstance(String stockDataProcessorName)
 	{
 		if (StringUtils.equals(CandleCollectorStockDataProcessor.CANDLE_DATA_NAME, stockDataProcessorName))
-			return new CandleCollectorStockDataProcessor(1000 * 30);
+			return new CandleCollectorStockDataProcessor();
 		else
 			return null;
 	}

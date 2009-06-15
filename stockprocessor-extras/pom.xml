@@ -4,6 +4,9 @@
   <artifactId>stockprocessor-extras</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <description>Stock Processor extra class implementations</description>
+  <build>
+  	<testSourceDirectory>/src/test</testSourceDirectory>
+  </build>
   <repositories>
   	<repository>
   		<id>activequant.org</id>

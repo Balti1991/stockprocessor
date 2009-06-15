@@ -4,6 +4,9 @@
   <artifactId>stockprocessor-gui</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <description>StockProcessor GUI module</description>
+  <build>
+  	<sourceDirectory>/src/gui</sourceDirectory>
+  </build>
   <dependencies>
   	<dependency>
   		<groupId>stockprocessor</groupId>

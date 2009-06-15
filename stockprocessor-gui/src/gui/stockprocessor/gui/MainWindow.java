@@ -3,10 +3,10 @@
  */
 package stockprocessor.gui;
 
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
@@ -32,9 +32,9 @@ public class MainWindow extends JFrame
 
 	protected ChartHolder chartHolder;
 
-	protected ProcessorManager processorManager;
+	protected final ProcessorManager processorManager;
 
-	private final SourceManager sourceManager;
+	protected final SourceManager sourceManager;
 
 	public MainWindow()
 	{
@@ -90,9 +90,12 @@ public class MainWindow extends JFrame
 			{
 				return stockData;
 			}
+
+			@Override
+			public void setOptionalInputParameterInformations(Map<String, Object> optInputParameters)
+			{
+			}
 		});
-		// customization
-		// processorManager.registerProcessorManager(new TAProcessorManager());
 	}
 
 	public static void main(String[] args)

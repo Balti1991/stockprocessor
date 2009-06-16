@@ -1,4 +1,5 @@
 #summary About StockProcessor
+#sidebar SideNavigation
 
 = Introduction =
 

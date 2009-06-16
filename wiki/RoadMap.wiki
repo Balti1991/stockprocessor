@@ -1,4 +1,5 @@
 #summary Ideas, aims some conceptions to project
+#sidebar SideNavigation
 
 = Introduction =
 

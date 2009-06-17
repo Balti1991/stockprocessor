@@ -3,7 +3,6 @@
  */
 package stockprocessor.gui.view;
 
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -25,6 +24,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.CandlestickRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
+import stockprocessor.gui.processor.BrokerElement;
 import stockprocessor.gui.processor.Element;
 
 /**
@@ -115,6 +115,11 @@ public class Chart extends JComponent
 		// add to chart
 		plot.setDataset(index + PLOT_INDEX_OHLC, element.getDatasetOHLC());
 		plot.setDataset(index + PLOT_INDEX_INTEGER, element.getDatasetTime());
+	}
+
+	public void registerBrokerElement(BrokerElement brokerElement)
+	{
+		brokerElement.setPlot(plot);
 	}
 
 	/**

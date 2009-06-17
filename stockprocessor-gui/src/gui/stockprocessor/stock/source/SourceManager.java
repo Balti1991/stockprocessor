@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stockprocessor.gui.processor.BaseElement;
+import stockprocessor.gui.processor.ChartElement;
 import stockprocessor.source.RandomStockDataSource;
 import stockprocessor.source.StockDataSource;
 
@@ -41,7 +41,7 @@ public class SourceManager
 		sourceManagerList.add(sourceManager);
 	}
 
-	public void registerElement(BaseElement element)
+	public void registerElement(ChartElement element)
 	{
 		((ChartElementDataSource) getInstance(ChartElementDataSource.CHART_ELEMENTS)).registerElement(element);
 	}

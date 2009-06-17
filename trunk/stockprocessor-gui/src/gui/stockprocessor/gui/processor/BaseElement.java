@@ -3,14 +3,11 @@
  */
 package stockprocessor.gui.processor;
 
-
+import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.time.ohlc.OHLCSeries;
 import org.jfree.data.time.ohlc.OHLCSeriesCollection;
 
-import stockprocessor.data.Candle;
 import stockprocessor.data.StockData;
 import stockprocessor.processor.StockDataReceiver;
 import stockprocessor.source.AbstractStockDataSource;
@@ -24,44 +21,28 @@ public class BaseElement extends AbstractStockDataSource<StockData<?>> implement
 
 	private final TimeSeriesCollection datasetTime = new TimeSeriesCollection();
 
-	private final StockDataReceiver<StockData<?>> stockDataReceiver;
+	protected final StockDataReceiver<StockData<?>> stockDataReceiver;
 
-	private final String instrument;
+	protected final String instrument;
 
+	/**
+	 * 
+	 */
 	public BaseElement(String instrument, StockDataReceiver<StockData<?>> stockDataReceiver)
 	{
 		this.instrument = instrument;
 		this.stockDataReceiver = stockDataReceiver;
-
-		// create datasets
-		getDatasetOHLC().addSeries(new OHLCSeries(getName()));
-		getDatasetTime().addSeries(new TimeSeries(getName(), Second.class));
 	}
 
 	public void storeData(String instrument, StockData<?> stockData)
 	{
 		Object value = stockData.getValue();
 
-		if (value instanceof Candle)
-		{
-			Candle candle = (Candle) value;
-
-			try
-			{
-				getDatasetOHLC().getSeries(0).add(new Second(stockData.getTime()), candle.getOpen(), candle.getMax(), candle.getMin(),
-						candle.getClose());
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		else if (value instanceof Integer)
+		if (value instanceof Integer)
 		{
 			try
 			{
-				// FIXME
-				getDatasetTime().getSeries(0).add(new Second(stockData.getTime()), ((Integer) value));
+				getDatasetTime().getSeries(0).add(getTimePeriod(stockData), ((Integer) value));
 			}
 			catch (Exception e)
 			{
@@ -74,10 +55,11 @@ public class BaseElement extends AbstractStockDataSource<StockData<?>> implement
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	protected RegularTimePeriod getTimePeriod(StockData<?> stockData)
+	{
+		return new Second(stockData.getTime());
+	}
+
 	@Override
 	public String toString()
 	{
@@ -87,6 +69,11 @@ public class BaseElement extends AbstractStockDataSource<StockData<?>> implement
 	public String getName()
 	{
 		return stockDataReceiver.getName() + ": " + instrument;
+	}
+
+	public TimeSeriesCollection getDatasetTime()
+	{
+		return datasetTime;
 	}
 
 	/*
@@ -100,18 +87,9 @@ public class BaseElement extends AbstractStockDataSource<StockData<?>> implement
 
 	/*
 	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.gui.processor.Element#getDatasetTime()
-	 */
-	public TimeSeriesCollection getDatasetTime()
-	{
-		return datasetTime;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
-	 * hu.bogar.anti.stock.processor.StockDataReceiver#newDataArrivedNotification
-	 * (java.lang.String, hu.bogar.anti.stock.data.StockData)
+	 * stockprocessor.processor.StockDataReceiver#newDataArrivedNotification
+	 * (java.lang.String, stockprocessor.data.StockData)
 	 */
 	@Override
 	public StockData<?> newDataArrivedNotification(String instrument, StockData<?> stockData)
@@ -132,15 +110,11 @@ public class BaseElement extends AbstractStockDataSource<StockData<?>> implement
 	/****************
 	 * data source
 	 ****************/
-
-	/*
-	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.source.StockDataSource#getAvailableInstruments()
-	 */
 	@Override
 	public String[] getAvailableInstruments()
 	{
 		return new String[]
 			{stockDataReceiver.getName()};
 	}
+
 }

@@ -20,19 +20,24 @@ import stockprocessor.data.information.ParameterInformation;
 /**
  * @author anti
  */
-public class CandleCollectorStockDataProcessor implements StockDataProcessor<StockData<Integer>>
+public class CandleCollectorStockDataProcessor implements StockDataProcessor<StockData<?>>
 {
+	/**
+	 * default value = 1 day
+	 */
+	private static final long DEFAULT_VALUE = 1l * 24;
+
 	/**
 	 * 
 	 */
-	private static final String CANDLE_WIDTH_PARAMETER_NAME = "Candle width";
+	private static final String CANDLE_WIDTH_PARAMETER_NAME = "Candle width [hour]";
 
 	public static final String CANDLE_DATA_NAME = "Candle data";
 
 	private static final Log log = LogFactory.getLog(CandleCollectorStockDataProcessor.class);
 
 	public static final ParameterInformation<Long> candleWidthParameter = new DefaultRangeParameterInformation<Long>(CANDLE_WIDTH_PARAMETER_NAME,
-			1l * 60 * 60 * 24, 1l, Long.MAX_VALUE, 1l, 1l);
+			DEFAULT_VALUE, 1l, Long.MAX_VALUE, 1l, 1l);
 
 	@SuppressWarnings("unchecked")
 	public static final List<ParameterInformation> optionalInputParameters = new ArrayList<ParameterInformation>();
@@ -41,7 +46,7 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 		optionalInputParameters.add(candleWidthParameter);
 	}
 
-	// parameter
+	// parameter candle width in hours
 	private long candleWidth;
 
 	// tmp candle
@@ -84,16 +89,16 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 	 * (hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public StockData<?> newDataArrivedNotification(String instrument, StockData<Integer> stockData)
+	public StockData<?> newDataArrivedNotification(String instrument, StockData<?> stockData)
 	{
 		log.debug("Received data [" + stockData + "] from [" + getName() + "]");
 
 		StockData<?> notification = null;
 		// not first and outside of the candle interval
-		if (startDate != null && startDate.getTime() + candleWidth < stockData.getTime().getTime())
+		if (startDate != null && startDate.getTime() + getCandleWidthInMilis() < stockData.getTime().getTime())
 		{
 			// create previous candle & send
-			CandleStockData candleStockData = new CandleStockData(candle, startDate, candleWidth, volume);
+			CandleStockData candleStockData = new CandleStockData(candle, startDate, getCandleWidthInMilis(), volume);
 
 			StockDataProcessor<StockData<?>> processor = getStockDataProcessor();
 			if (processor != null)
@@ -112,28 +117,40 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 			volume = 0;
 		}
 
+		Object value = stockData.getValue();
+
 		// first data in the interval
 		if (startDate == null)
 		{
 			// store values
-			candle = new Candle(stockData.getValue(), stockData.getValue(), stockData.getValue(), stockData.getValue());
+			if (value instanceof Integer)
+			{
+				Integer intValue = (Integer) value;
+				candle = new Candle(intValue);
+			}
+			else if (value instanceof Candle)
+			{
+				Candle candleValue = (Candle) value;
+				candle = candleValue;
+			}
 
 			// create first time
-			startDate = new Date(((stockData.getTime().getTime() / candleWidth)) * candleWidth);
+			startDate = new Date(((stockData.getTime().getTime() / getCandleWidthInMilis())) * getCandleWidthInMilis());
 		}
 		else
 		{
-			// check minimum
-			if (stockData.getValue() < candle.getMin())
-				candle = new Candle(candle.getOpen(), candle.getClose(), stockData.getValue(), candle.getMax());
-
-			// check maximum
-			if (candle.getMax() < stockData.getValue())
-				candle = new Candle(candle.getOpen(), candle.getClose(), candle.getMin(), stockData.getValue());
+			if (value instanceof Integer)
+			{
+				Integer intValue = (Integer) value;
+				candle.addValue(intValue);
+			}
+			else if (value instanceof Candle)
+			{
+				Candle candleValue = (Candle) value;
+				candle.addValue(candleValue);
+			}
 		}
 
-		// always store the closing and volume informations
-		candle = new Candle(candle.getOpen(), stockData.getValue(), candle.getMin(), candle.getMax());
 		volume += stockData.getVolume();
 
 		return notification;
@@ -186,7 +203,7 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 		Object object = optInputParameters.get(CANDLE_WIDTH_PARAMETER_NAME);
 		if (object != null)
 		{
-			this.candleWidth = (Long) object;
+			this.candleWidth = ((Double) object).longValue();
 		}
 	}
 
@@ -215,5 +232,13 @@ public class CandleCollectorStockDataProcessor implements StockDataProcessor<Sto
 	public StockDataProcessor<StockData<?>> getStockDataProcessor()
 	{
 		return stockDataProcessor;
+	}
+
+	/**
+	 * @return the candleWidth
+	 */
+	public long getCandleWidthInMilis()
+	{
+		return candleWidth * 60 * 60 * 1000;
 	}
 }

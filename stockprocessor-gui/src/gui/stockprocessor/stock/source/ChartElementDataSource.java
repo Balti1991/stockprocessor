@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import stockprocessor.data.StockData;
+import stockprocessor.gui.processor.ChartElement;
 import stockprocessor.gui.processor.BaseElement;
 import stockprocessor.processor.StockDataReceiver;
 import stockprocessor.source.AbstractStockDataSource;
@@ -21,7 +22,7 @@ public class ChartElementDataSource extends AbstractStockDataSource<StockData<?>
 {
 	public static final String CHART_ELEMENTS = "Chart elements";
 
-	private final Map<String, BaseElement> elementMap = new HashMap<String, BaseElement>();
+	private final Map<String, ChartElement> elementMap = new HashMap<String, ChartElement>();
 
 	private final List<String> elementNameList = new ArrayList<String>();
 
@@ -45,7 +46,7 @@ public class ChartElementDataSource extends AbstractStockDataSource<StockData<?>
 		return "Chart elements";
 	}
 
-	public void registerElement(BaseElement element)
+	public void registerElement(ChartElement element)
 	{
 		String name = element.getName();
 		elementMap.put(name, element);

@@ -6,7 +6,7 @@ package stockprocessor.processor;
 /**
  * @author anti
  */
-public enum Action
+public enum StockAction
 {
 	BUY, NOP, SELL;
 }

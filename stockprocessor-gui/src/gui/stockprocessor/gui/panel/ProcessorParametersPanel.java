@@ -6,11 +6,15 @@ package stockprocessor.gui.panel;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,26 +45,55 @@ public class ProcessorParametersPanel extends JPanel
 
 	private List<ParameterInformation> parameterInformations = null;
 
+	private final JPanel parametersPanel = new JPanel();
+
 	/**
 	 * 
 	 */
 	public ProcessorParametersPanel()
 	{
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Parameters"), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		setLayout(new GridLayout(0, 2));
+		setLayout(new GridLayout(3, 0));
+
+		parametersPanel.setLayout(new GridLayout(0, 2));
+		add(parametersPanel);
+
+		add(Box.createVerticalStrut(8));
+
+		JButton button = new JButton("Restore defaults");
+		button.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updateView();
+			}
+		});
+		add(button);
 	}
 
 	public void setStockDataProcessor(StockDataProcessor<?> stockDataProcessor)
 	{
 		// clear properties
-		removeAll();
+		parameterInformations = null;
 
-		// finish if no processor
-		if (stockDataProcessor == null)
+		if (stockDataProcessor != null)
+		{
+			parameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
+			log.debug("Optional-ParameterInfoList size:" + parameterInformations.size());
+		}
+
+		updateView();
+	}
+
+	private void updateView()
+	{
+		// clear properties
+		parametersPanel.removeAll();
+
+		// if no selected processor, nothing to do
+		if (parameterInformations == null)
 			return;
-
-		parameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
-		log.debug("Optional-ParameterInfoList size:" + parameterInformations.size());
 
 		for (int i = 0; i < parameterInformations.size(); i++)
 		{
@@ -70,7 +103,7 @@ public class ProcessorParametersPanel extends JPanel
 
 			log.debug(parameterInformation);
 
-			add(new JLabel(parameterInformation.getDisplayName()));
+			parametersPanel.add(new JLabel(parameterInformation.getDisplayName()));
 
 			switch (parameterInformation.type())
 			{
@@ -85,7 +118,7 @@ public class ProcessorParametersPanel extends JPanel
 				comboBox.setSelectedItem("" + parameterInformation.getDefaultValue()); // FIXME
 				comboBox.setPreferredSize(preferredSize);
 
-				add(comboBox);
+				parametersPanel.add(comboBox);
 				break;
 			}
 				// case REAL_LIST:
@@ -128,7 +161,7 @@ public class ProcessorParametersPanel extends JPanel
 				JSpinner spinner = new JSpinner(spinnerNumberModel);
 				spinner.setPreferredSize(preferredSize);
 
-				add(spinner);
+				parametersPanel.add(spinner);
 				break;
 			}
 				// case REAL_RANGE:
@@ -178,7 +211,7 @@ public class ProcessorParametersPanel extends JPanel
 		// }
 
 		// layout
-		validate();
+		repaint();
 	}
 
 	public Map<String, Object> getParameters()
@@ -190,7 +223,7 @@ public class ProcessorParametersPanel extends JPanel
 		{
 			ParameterInformation parameterInformation = parameterInformations.get(i);
 			String displayName = parameterInformation.getDisplayName();
-			Component component = getComponent(i * 2 + 1);
+			Component component = parametersPanel.getComponent(i * 2 + 1);
 
 			log.debug(parameterInformation);
 

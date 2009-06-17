@@ -3,7 +3,6 @@
  */
 package stockprocessor.gui;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -25,11 +24,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -37,14 +34,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import stockprocessor.broker.StockBroker;
 import stockprocessor.data.StockData;
-import stockprocessor.data.information.ListParameterInformation;
-import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.data.information.RangeParameterInformation;
-import stockprocessor.gui.processor.BaseElement;
+import stockprocessor.gui.panel.DataSourcePanel;
+import stockprocessor.gui.panel.ProcessorParametersPanel;
+import stockprocessor.gui.processor.BrokerElement;
+import stockprocessor.gui.processor.ChartElement;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
 import stockprocessor.processor.ProcessorManager;
+import stockprocessor.processor.StockAction;
 import stockprocessor.processor.StockDataProcessor;
 import stockprocessor.processor.StockDataReceiver;
 import stockprocessor.source.StockDataSource;
@@ -67,9 +66,11 @@ public class AddElementWindow extends JDialog
 
 	private JList elementsList;
 
-	private Dimension preferredSize;
+	// private JPanel parametersPanel;
 
-	private JPanel parametersPanel;
+	private ProcessorParametersPanel parametersPanel;
+
+	private DataSourcePanel sourcePanel;
 
 	private JPanel targetPanel;
 
@@ -83,11 +84,7 @@ public class AddElementWindow extends JDialog
 
 	private JComboBox destinationChartComboBox;
 
-	private JComboBox sourceComboBox;
-
 	private JTextField descriptionTextField;
-
-	private JComboBox instrumentComboBox;
 
 	public AddElementWindow(ChartHolder chartHolder, ProcessorManager processorManager, SourceManager sourceManager)
 	{
@@ -157,11 +154,20 @@ public class AddElementWindow extends JDialog
 		descriptionTextField = new JTextField();
 
 		// parameters
-		parametersPanel = new JPanel();
-		parametersPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Parameters"), BorderFactory.createEmptyBorder(
-				10, 10, 10, 10)));
-		parametersPanel.setLayout(new GridLayout(0, 2));
+		parametersPanel = new ProcessorParametersPanel();
 		dataPanel.add(parametersPanel);
+
+		// sources
+		sourcePanel = new DataSourcePanel(sourceManager);
+		sourcePanel.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updateButtons();
+			}
+		});
+		dataPanel.add(sourcePanel);
 
 		// //////////////////////////////////////////////////////////////////////////////////
 		// target
@@ -171,55 +177,6 @@ public class AddElementWindow extends JDialog
 				10, 10)));
 		targetPanel.setLayout(new GridLayout(4, 2, 2, 2));
 		dataPanel.add(targetPanel);
-
-		// source input
-		JLabel sourceLabel = new JLabel("Source");
-		targetPanel.add(sourceLabel);
-
-		sourceComboBox = new JComboBox(getAvailableSources());
-		sourceComboBox.setSelectedIndex(-1);
-		sourceComboBox.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				boolean selected = sourceComboBox.getSelectedIndex() > -1;
-
-				instrumentComboBox.removeAllItems();
-
-				if (selected)
-				{
-					// get source
-					StockDataSource stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
-					String[] availableInstruments = stockDataSource.getAvailableInstruments();
-					for (String instrument : availableInstruments)
-					{
-						instrumentComboBox.addItem(instrument);
-					}
-					instrumentComboBox.setSelectedIndex(-1);
-				}
-
-				instrumentComboBox.setEnabled(selected);
-				updateButtons();
-			}
-		});
-		targetPanel.add(sourceComboBox);
-
-		// source instrument
-		JLabel instrumentLabel = new JLabel("Instrument");
-		targetPanel.add(instrumentLabel);
-
-		instrumentComboBox = new JComboBox();
-		instrumentComboBox.setEnabled(false);
-		instrumentComboBox.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				updateButtons();
-			}
-		});
-		targetPanel.add(instrumentComboBox);
 
 		// //////////////////////////////////////////////////////////////////////////////////
 		// destination
@@ -310,17 +267,6 @@ public class AddElementWindow extends JDialog
 	/**
 	 * @return
 	 */
-	private Object[] getAvailableSources()
-	{
-		Object[] sources = sourceManager.getAvailableSources().toArray();
-		Arrays.sort(sources);
-
-		return sources;
-	}
-
-	/**
-	 * @return
-	 */
 	protected Object[] getAvailableProcessors()
 	{
 		Object[] processors = processorManager.getAvailableProcessors().toArray();
@@ -354,7 +300,7 @@ public class AddElementWindow extends JDialog
 
 		// form buttons
 		resetButton.setEnabled(isElementSelected);
-		addButton.setEnabled(isElementSelected && instrumentComboBox.getSelectedIndex() > -1);
+		addButton.setEnabled(isElementSelected && sourcePanel.isSelected());
 
 		// destination buttons
 		sizeBigRadioButton.setEnabled(isNewChart);
@@ -366,147 +312,21 @@ public class AddElementWindow extends JDialog
 		String elementSelectedValue = (String) elementsList.getSelectedValue();
 		boolean isElementSelected = elementSelectedValue != null;
 
-		// clear properties
-		parametersPanel.removeAll();
-		int rowCounter = 0;
-
-		// create new properties (if required)
 		if (isElementSelected)
 		{
+			// create new properties (if required)
 			StockDataProcessor<?> stockDataProcessor = processorManager.getInstance(elementSelectedValue);
 
-			// processorManager.getInputParameterInfo(elementSelectedValue); //
-			// FIXME
-			//
-			// CoreMetaData2 coreMetaData =
-			// processorManager.getCoreMetaData(elementSelectedValue);
-			//
-			// descriptionTextField.setText(coreMetaData.getFuncInfo().hint());
-
 			descriptionTextField.setText(stockDataProcessor.getDescription());
-			List<ParameterInformation> optionalInputParameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
-
-			// int nbOptInput = coreMetaData.getFuncInfo().nbOptInput();
-			List<ParameterInformation> parameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
-			log.debug("ParameterInfoList size:" + parameterInformations.size());
-
-			for (int i = 0; i < parameterInformations.size(); i++)
-			{
-				// OptInputParameterInfo optInputParameterInfo =
-				// coreMetaData.getOptInputParameterInfo(i);
-				ParameterInformation parameterInformation = parameterInformations.get(i);
-
-				log.debug(parameterInformation);
-
-				parametersPanel.add(new JLabel(parameterInformation.getDisplayName()));
-
-				switch (parameterInformation.type())
-				{
-				// INTEGER_LIST
-				case LIST:
-				{
-					// IntegerList optInputIntegerList
-					// coreMetaData.getOptInputIntegerList(i);
-					ListParameterInformation listParameterInformation = (ListParameterInformation) parameterInformation;
-
-					JComboBox comboBox = new JComboBox(listParameterInformation.getStringValues());
-					comboBox.setSelectedItem("" + parameterInformation.getDefaultValue()); // FIXME
-					comboBox.setPreferredSize(preferredSize);
-
-					parametersPanel.add(comboBox);
-					break;
-				}
-					// case REAL_LIST:
-					// {
-					// // RealList optInputRealList =
-					// // coreMetaData.getOptInputRealList(i);
-					//
-					// JComboBox comboBox = new
-					// JComboBox(parameterInformation.string());
-					// //
-					// comboBox.setSelectedIndex(optInputRealList.defaultValue());
-					// // FIXME ez hogy?
-					// comboBox.setPreferredSize(preferredSize);
-					//
-					// parametersPanel.add(comboBox);
-					// break;
-					// }
-
-					// INTEGER_RANGE
-				case RANGE:
-				{
-					// IntegerRange optInputIntegerRange =
-					// coreMetaData.getOptInputIntegerRange(i);
-
-					RangeParameterInformation rangeParameterInformation = (RangeParameterInformation) parameterInformation;
-
-					double defaultValue = rangeParameterInformation.getDefaultValue().doubleValue();
-					double increment = rangeParameterInformation.getIncrement().doubleValue();
-
-					double suggested_start = rangeParameterInformation.getStart().doubleValue();
-					double suggested_end = rangeParameterInformation.getEnd().doubleValue();
-
-					// corrections
-					suggested_start = (suggested_start < defaultValue) ? suggested_start : defaultValue;
-					suggested_end = (defaultValue < suggested_end) ? suggested_end : defaultValue;
-
-					SpinnerNumberModel spinnerNumberModel = //
-					new SpinnerNumberModel(defaultValue, suggested_start, suggested_end, increment);
-
-					JSpinner spinner = new JSpinner(spinnerNumberModel);
-					spinner.setPreferredSize(preferredSize);
-
-					parametersPanel.add(spinner);
-					break;
-				}
-					// case REAL_RANGE:
-					// {
-					// // RealRange optInputRealRange =
-					// // coreMetaData.getOptInputRealRange(i);
-					//
-					// double defaultValue =
-					// parameterInformation.getDefaultValue();
-					// double suggested_start = parameterInformation.getStart();
-					// double suggested_end = parameterInformation.getEnd();
-					//
-					// // corrections
-					// suggested_start = (suggested_start < defaultValue) ?
-					// suggested_start : defaultValue;
-					// suggested_end = (defaultValue < suggested_end) ?
-					// suggested_end : defaultValue;
-					//
-					// SpinnerNumberModel spinnerNumberModel = //
-					// new SpinnerNumberModel(defaultValue, suggested_start,
-					// suggested_end, parameterInformation.getIncrement());
-					//
-					// JSpinner spinner = new JSpinner(spinnerNumberModel);
-					// spinner.setPreferredSize(preferredSize);
-					//
-					// parametersPanel.add(spinner);
-					// break;
-					// }
-
-				default:
-					break;
-				}
-
-				rowCounter++;
-			}
+			parametersPanel.setStockDataProcessor(stockDataProcessor);
+			sourcePanel.setStockDataProcessor(stockDataProcessor);
 		}
-
-		// visual extra
-		for (int i = rowCounter; i < 8; i++) // FIXME auto max row count
+		else
 		{
-			parametersPanel.add(new JLabel(" "));
-			JTextField textField = new JTextField();
-			textField.setEnabled(false);
-			parametersPanel.add(textField);
-
-			if (preferredSize == null)
-				preferredSize = textField.getPreferredSize();
-			else
-				textField.setPreferredSize(preferredSize);
-
+			// clear
+			descriptionTextField.setText("");
+			parametersPanel.setStockDataProcessor(null);
+			sourcePanel.setStockDataProcessor(null);
 		}
 
 		// layout
@@ -548,17 +368,53 @@ public class AddElementWindow extends JDialog
 		// create processor
 		StockDataProcessor<?> stockDataProcessor = processorManager.getInstance((String) elementsList.getSelectedValue());
 
-		String instrument = (String) instrumentComboBox.getSelectedItem();
+		// apply the values
+		stockDataProcessor.setOptionalInputParameterInformations(parametersPanel.getParameters());
+
+		String instrument = sourcePanel.getInstrument();
 
 		// create element
-		BaseElement element = new BaseElement(instrument, (StockDataReceiver<StockData<?>>) stockDataProcessor);
+		ChartElement element = new ChartElement(instrument, (StockDataReceiver<StockData<?>>) stockDataProcessor);
 
-		StockDataSource stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
+		StockDataSource stockDataSource = sourcePanel.getStockDataSource();
 		stockDataSource.registerDataReceiver(instrument, element);
 
 		sourceManager.registerElement(element);
 
 		chart.addElement(element);
+
+		// FIXME
+		BrokerElement<StockData<?>> brokerElement = new BrokerElement<StockData<?>>(new StockBroker<StockData<?>>()
+		{
+			@Override
+			public String getName()
+			{
+				return "test";
+			}
+
+			@Override
+			public StockAction newDataArrivedNotification(String instrument, StockData<?> stockData)
+			{
+				double random = Math.random();
+
+				if (random > 0.88)
+				{
+					log.debug("BUY");
+					return StockAction.BUY;
+				}
+				if (random < 0.11)
+				{
+					log.debug("SELL");
+					return StockAction.SELL;
+				}
+
+				log.debug("NOP");
+				return StockAction.NOP;
+			}
+		});
+
+		chart.registerBrokerElement(brokerElement);
+		stockDataSource.registerDataReceiver(instrument, brokerElement);
 	}
 
 	/**

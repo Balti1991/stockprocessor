@@ -3,26 +3,15 @@
  */
 package stockprocessor.broker;
 
-import stockprocessor.processor.Action;
+import stockprocessor.data.StockData;
+import stockprocessor.processor.StockAction;
 
 /**
  * @author anti
  */
-public interface StockBroker
+public interface StockBroker<SD extends StockData<?>>
 {
-	/**
-	 * gives a bay trigger for the broker, to execute a default bay transaction
-	 */
-	public void bay();
+	public String getName();
 
-	/**
-	 * gives a sell trigger for the broker, to execute a default sell
-	 * transaction
-	 */
-	public void sell();
-
-	/**
-	 * gives a bay or sell trigger for the broker, to execute the transaction
-	 */
-	public void transfer(Action action, int price, int amount, Integer stopLimit);
+	public StockAction newDataArrivedNotification(String instrument, SD stockData);
 }

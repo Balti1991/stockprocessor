@@ -5,37 +5,31 @@ package stockprocessor.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.broker.StockBroker;
 import stockprocessor.data.StockData;
+import stockprocessor.gui.panel.ChartSelectorPanel;
 import stockprocessor.gui.panel.DataSourcePanel;
 import stockprocessor.gui.panel.ProcessorParametersPanel;
 import stockprocessor.gui.processor.BrokerElement;
@@ -66,25 +60,18 @@ public class AddElementWindow extends JDialog
 
 	private JList elementsList;
 
-	// private JPanel parametersPanel;
-
 	private ProcessorParametersPanel parametersPanel;
 
 	private DataSourcePanel sourcePanel;
 
-	private JPanel targetPanel;
-
-	private JRadioButton sizeBigRadioButton;
-
-	private JRadioButton sizeSmallRadioButton;
+	// private JPanel targetPanel;
+	private ChartSelectorPanel targetPanel;
 
 	private JButton resetButton;
 
 	private JButton addButton;
 
-	private JComboBox destinationChartComboBox;
-
-	private JTextField descriptionTextField;
+	private JTextArea descriptionTextField;
 
 	public AddElementWindow(ChartHolder chartHolder, ProcessorManager processorManager, SourceManager sourceManager)
 	{
@@ -151,7 +138,9 @@ public class AddElementWindow extends JDialog
 		dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.Y_AXIS));
 		mainPane.add(dataPanel);
 
-		descriptionTextField = new JTextField();
+		descriptionTextField = new JTextArea();
+		descriptionTextField.setEditable(false);
+		dataPanel.add(descriptionTextField);
 
 		// parameters
 		parametersPanel = new ProcessorParametersPanel();
@@ -169,57 +158,16 @@ public class AddElementWindow extends JDialog
 		});
 		dataPanel.add(sourcePanel);
 
-		// //////////////////////////////////////////////////////////////////////////////////
 		// target
-		// //////////////////////////////////////////////////////////////////////////////////
-		targetPanel = new JPanel();
-		targetPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Target"), BorderFactory.createEmptyBorder(10, 10,
-				10, 10)));
-		targetPanel.setLayout(new GridLayout(4, 2, 2, 2));
-		dataPanel.add(targetPanel);
-
-		// //////////////////////////////////////////////////////////////////////////////////
-		// destination
-		// //////////////////////////////////////////////////////////////////////////////////
-		// destination chart
-		JLabel destinationChartLabel = new JLabel("Destination chart");
-		targetPanel.add(destinationChartLabel);
-
-		destinationChartComboBox = new JComboBox(getChartListNames());
-		destinationChartComboBox.setSelectedIndex(-1);
-		destinationChartComboBox.addActionListener(new ActionListener()
+		targetPanel = new ChartSelectorPanel(chartHolder, true);
+		targetPanel.addActionListener(new ActionListener()
 		{
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * java.awt.event.ActionListener#actionPerformed(java.awt.event.
-			 * ActionEvent)
-			 */
-			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				updateButtons();
 			}
 		});
-		destinationChartComboBox.setEditable(true);
-		targetPanel.add(destinationChartComboBox);
-
-		// size buttons
-		JPanel sizePanel = new JPanel();
-		targetPanel.add(sizePanel);
-
-		sizeBigRadioButton = new JRadioButton("Big chart");
-		sizeBigRadioButton.setEnabled(false);
-		sizePanel.add(sizeBigRadioButton);
-
-		sizeSmallRadioButton = new JRadioButton("Small chart");
-		sizeSmallRadioButton.setEnabled(false);
-		sizePanel.add(sizeSmallRadioButton);
-
-		ButtonGroup sizeButtonGroup = new ButtonGroup();
-		sizeButtonGroup.add(sizeBigRadioButton);
-		sizeButtonGroup.add(sizeSmallRadioButton);
-		sizeBigRadioButton.setSelected(true);
+		dataPanel.add(targetPanel);
 
 		// //////////////////////////////////////////////////////////////////////////////////
 		// buttons
@@ -276,35 +224,15 @@ public class AddElementWindow extends JDialog
 	}
 
 	/**
-	 * @return
-	 */
-	protected String[] getChartListNames()
-	{
-		List<Chart> chartList = chartHolder.getChartList();
-		String[] chartListNames = new String[chartList.size()];
-		for (int i = 0; i < chartList.size(); i++)
-		{
-			chartListNames[i] = chartList.get(i).getName();
-		}
-
-		return chartListNames;
-	}
-
-	/**
 	 * 
 	 */
 	protected void updateButtons()
 	{
 		boolean isElementSelected = elementsList.getSelectedValue() != null;
-		boolean isNewChart = isSelectedNewChart();
 
 		// form buttons
 		resetButton.setEnabled(isElementSelected);
 		addButton.setEnabled(isElementSelected && sourcePanel.isSelected());
-
-		// destination buttons
-		sizeBigRadioButton.setEnabled(isNewChart);
-		sizeSmallRadioButton.setEnabled(isNewChart);
 	}
 
 	private void updateProperties()
@@ -330,7 +258,7 @@ public class AddElementWindow extends JDialog
 		}
 
 		// layout
-		validate();
+		repaint();
 	}
 
 	/**
@@ -338,31 +266,7 @@ public class AddElementWindow extends JDialog
 	 */
 	private void addElement2Chart()
 	{
-		Chart chart;
-
-		// get chart
-		if (isSelectedNewChart())
-		{
-			// create new
-			String name = (String) destinationChartComboBox.getSelectedItem();
-			if (StringUtils.isEmpty(name))
-			{
-				name = "new chart";
-			}
-
-			boolean normalSize = sizeBigRadioButton.isSelected();
-
-			// create
-			chart = new Chart(name, normalSize);
-
-			// store
-			chartHolder.addChart(chart);
-		}
-		else
-		{
-			// get selected
-			chart = chartHolder.getChart(destinationChartComboBox.getSelectedIndex());
-		}
+		Chart chart = targetPanel.getChart();
 		log.debug("Useing chart [" + chart + "]");
 
 		// create processor
@@ -415,16 +319,5 @@ public class AddElementWindow extends JDialog
 
 		chart.registerBrokerElement(brokerElement);
 		stockDataSource.registerDataReceiver(instrument, brokerElement);
-	}
-
-	/**
-	 * @return
-	 */
-	private boolean isSelectedNewChart()
-	{
-		Object selectedItem = destinationChartComboBox.getSelectedItem();
-
-		boolean isNewChart = destinationChartComboBox.getSelectedIndex() == -1 || !(selectedItem != null && selectedItem.toString().length() > 0);
-		return isNewChart;
 	}
 }

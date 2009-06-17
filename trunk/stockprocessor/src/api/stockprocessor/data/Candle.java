@@ -10,11 +10,25 @@ public class Candle
 {
 	private final int open;
 
-	private final int close;
+	private int close;
 
-	private final int min;
+	private int min;
 
-	private final int max;
+	private int max;
+
+	/**
+	 * @param open
+	 * @param close
+	 * @param min
+	 * @param max
+	 */
+	public Candle(final int open)
+	{
+		this.open = open;
+		this.close = open;
+		this.min = open;
+		this.max = open;
+	}
 
 	/**
 	 * @param open
@@ -50,9 +64,35 @@ public class Candle
 		return max;
 	}
 
+	/**
+	 * moves the closing value of candle
+	 * 
+	 * @param value
+	 */
+	public void addValue(Integer value)
+	{
+		// set max
+		if (max < value)
+			max = value;
+
+		// set min
+		if (min > value)
+			min = value;
+
+		// set close
+		close = value;
+	}
+
+	public void addValue(Candle value)
+	{
+		addValue(value.getOpen());
+		addValue(value.getMin());
+		addValue(value.getMax());
+		addValue(value.getClose());
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

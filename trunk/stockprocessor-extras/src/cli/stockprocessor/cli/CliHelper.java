@@ -3,7 +3,7 @@
  */
 package stockprocessor.cli;
 
-import stockprocessor.processor.Action;
+import stockprocessor.processor.StockAction;
 
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
@@ -20,17 +20,17 @@ public class CliHelper
 	{
 	}
 
-	public Action sma(double[] inArray)
+	public StockAction sma(double[] inArray)
 	{
 		return movingAverage(MAType.Sma, inArray);
 	}
 
-	public Action ema(double[] inArray)
+	public StockAction ema(double[] inArray)
 	{
 		return movingAverage(MAType.Ema, inArray);
 	}
 
-	protected Action movingAverage(MAType maType, double[] inArray)
+	protected StockAction movingAverage(MAType maType, double[] inArray)
 	{
 		Core core = new Core();
 
@@ -60,17 +60,17 @@ public class CliHelper
 	 * @param result
 	 * @return
 	 */
-	protected Action evaulateMovingAverage(double result)
+	protected StockAction evaulateMovingAverage(double result)
 	{
 		if (result > 0)
-			return Action.BUY;
+			return StockAction.BUY;
 		else if (result < 0)
-			return Action.SELL;
+			return StockAction.SELL;
 		else
-			return Action.NOP;
+			return StockAction.NOP;
 	}
 
-	protected Action stoch(double[] inArray, double[] inHigh, double[] inLow, double[] inClose, //
+	protected StockAction stoch(double[] inArray, double[] inHigh, double[] inLow, double[] inClose, //
 			int optInFastK_Period, int optInSlowK_Period, MAType optInSlowK_MAType, int optInSlowD_Period, MAType optInSlowD_MAType)
 	{
 		Core core = new Core();
@@ -108,13 +108,13 @@ public class CliHelper
 	 * @param resultD
 	 * @return
 	 */
-	protected Action evaulateStock(double resultK, double resultD)
+	protected StockAction evaulateStock(double resultK, double resultD)
 	{
 		if (resultK > resultD)
-			return Action.BUY;
+			return StockAction.BUY;
 		else if (resultK < resultD)
-			return Action.SELL;
+			return StockAction.SELL;
 		else
-			return Action.NOP;
+			return StockAction.NOP;
 	}
 }

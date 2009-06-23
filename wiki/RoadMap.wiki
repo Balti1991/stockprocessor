@@ -6,9 +6,11 @@
 This is not exactly a road-map, because the project is in very early state, so we only put some aims and good ideas to be followed
 
 
-= Details =
+= TODO =
 
-
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * refact: new conception about _DataHandler_
+  * migrate _Broker_ object into _DataProcessor_
+  * fix: chart/chart element remove
+  * new: chart element types for source types (int, candle, action, etc.) to visualize
+  * new: broker creator window
+  * new: broker xml save/load function

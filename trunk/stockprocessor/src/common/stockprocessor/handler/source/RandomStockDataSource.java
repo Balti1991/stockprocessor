@@ -1,21 +1,23 @@
 /**
  * 
  */
-package stockprocessor.source;
+package stockprocessor.handler.source;
 
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import stockprocessor.data.StockData;
-import stockprocessor.source.AbstractStockDataSource;
-import stockprocessor.source.ImportTimer;
+import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.processor.AbstractDataProcessor;
 
 /**
  * @author anti
  */
-public class RandomStockDataSource extends AbstractStockDataSource<StockData<Integer>>
+public class RandomStockDataSource extends AbstractDataSource<StockData<Integer>>
 {
 	public static final String INSTRUMENT = "RND";
 
@@ -38,7 +40,7 @@ public class RandomStockDataSource extends AbstractStockDataSource<StockData<Int
 			@Override
 			protected void timeTick()
 			{
-				publishNewStockData(INSTRUMENT, generateStockData());
+				publishNewData(INSTRUMENT, generateStockData());
 			}
 		};
 	}
@@ -70,12 +72,26 @@ public class RandomStockDataSource extends AbstractStockDataSource<StockData<Int
 
 	/*
 	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.source.StockDataSource#getAvailableInstruments()
+	 * @see stockprocessor.source.AbstractDataSource#createOutputParameters()
 	 */
 	@Override
-	public String[] getAvailableInstruments()
+	protected List<ParameterInformation> createOutputParameters()
 	{
-		return new String[]
-			{INSTRUMENT};
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
+
+		ParameterInformation parameterInformation = AbstractDataProcessor.createParameterInformation(INSTRUMENT, ParameterType.STOCK_DATA_INTEGER);
+		list.add(parameterInformation);
+
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.data.handler.DataHandler#getDescription()
+	 */
+	@Override
+	public String getDescription()
+	{
+		return "Generates random stock datas, in stepping " + dateStep + "ms";
 	}
 }

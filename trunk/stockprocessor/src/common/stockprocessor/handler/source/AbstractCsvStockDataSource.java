@@ -1,5 +1,4 @@
-package stockprocessor.source;
-
+package stockprocessor.handler.source;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,8 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.StockData;
-import stockprocessor.processor.StockDataReceiver;
-
+import stockprocessor.handler.receiver.DataReceiver;
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -26,7 +24,7 @@ import au.com.bytecode.opencsv.CSVReader;
 /**
  * @author anti
  */
-public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extends AbstractStockDataSource<SD>
+public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extends AbstractDataSource<SD>
 {
 	private static final Log log = LogFactory.getLog(AbstractCsvStockDataSource.class);
 
@@ -50,7 +48,7 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 	/**
 	 * @throws IOException
 	 */
-	protected void readFile(StockDataReceiver<SD> dataReceiver, Reader reader, char separator) throws IOException
+	protected void readFile(DataReceiver<SD> dataReceiver, Reader reader, char separator) throws IOException
 	{
 		// prepare
 		Reader bufferedReader = new BufferedReader(reader);
@@ -67,8 +65,8 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 				String instrument = extractInstument(nextLine);
 				SD stockData = processLine(nextLine);
 
-				// skipp empty data
-				if (stockData != null)
+				// skip empty & fake data
+				if (stockData != null && stockData.getVolume() > 0)
 				{
 					try
 					{
@@ -119,17 +117,6 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 
 	/*
 	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.source.StockDataSource#getAvailableInstruments()
-	 */
-	@Override
-	public String[] getAvailableInstruments()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see hu.bogar.anti.stock.source.StockDataSource#getName()
 	 */
 	@Override
@@ -146,7 +133,7 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 	 * (java.lang.String, hu.bogar.anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, StockDataReceiver<SD> dataReceiver)
+	public void registerDataReceiver(String instrument, DataReceiver<SD> dataReceiver)
 	{
 		Reader reader = null;
 		try

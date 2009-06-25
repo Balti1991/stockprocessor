@@ -1,28 +1,27 @@
 /**
  * 
  */
-package stockprocessor.processor;
-
+package stockprocessor.handler.processor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stockprocessor.processor.StockDataProcessor;
+import stockprocessor.handler.processor.DataProcessor;
 
 /**
  * @author anti
  */
 public class ProcessorManager
 {
-	private final Map<String, StockDataProcessor<?>> processorMap = new HashMap<String, StockDataProcessor<?>>();
+	private final Map<String, DataProcessor<?, ?>> processorMap = new HashMap<String, DataProcessor<?, ?>>();
 
 	private final List<ProcessorManager> processorManagerList = new ArrayList<ProcessorManager>();
 
-	public void registerStockDataProcessor(StockDataProcessor<?> stockDataProcessor)
+	public void registerDataProcessor(DataProcessor<?, ?> dataProcessor)
 	{
-		processorMap.put(stockDataProcessor.getName(), stockDataProcessor);
+		processorMap.put(dataProcessor.getName(), dataProcessor);
 	}
 
 	public void registerProcessorManager(ProcessorManager processorManager)
@@ -48,21 +47,21 @@ public class ProcessorManager
 		return list;
 	}
 
-	public StockDataProcessor<?> getInstance(String stockDataProcessorName)
+	public DataProcessor<?, ?> getInstance(String dataProcessorName)
 	{
-		StockDataProcessor<?> stockDataProcessor;
+		DataProcessor<?, ?> dataProcessor;
 
 		// get from base list
-		stockDataProcessor = processorMap.get(stockDataProcessorName);
-		if (stockDataProcessor != null)
-			return stockDataProcessor;
+		dataProcessor = processorMap.get(dataProcessorName);
+		if (dataProcessor != null)
+			return dataProcessor;
 
 		// try from external managers
 		for (ProcessorManager processorManager : processorManagerList)
 		{
-			stockDataProcessor = processorManager.getInstance(stockDataProcessorName);
-			if (stockDataProcessor != null)
-				return stockDataProcessor;
+			dataProcessor = processorManager.getInstance(dataProcessorName);
+			if (dataProcessor != null)
+				return dataProcessor;
 		}
 
 		// else...

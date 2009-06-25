@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -27,21 +29,25 @@ import javax.swing.event.ListSelectionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stockprocessor.broker.StockBroker;
+import stockprocessor.broker.RandomBroker;
+import stockprocessor.broker.SimpleBrokerHouse;
 import stockprocessor.data.StockData;
+import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.gui.panel.ChartSelectorPanel;
 import stockprocessor.gui.panel.DataSourcePanel;
 import stockprocessor.gui.panel.ProcessorParametersPanel;
-import stockprocessor.gui.processor.BrokerElement;
-import stockprocessor.gui.processor.ChartElement;
+import stockprocessor.gui.receiver.BrokerElement;
+import stockprocessor.gui.receiver.CandleElement;
+import stockprocessor.gui.receiver.Element;
+import stockprocessor.gui.receiver.TimeElement;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
-import stockprocessor.processor.ProcessorManager;
-import stockprocessor.processor.StockAction;
-import stockprocessor.processor.StockDataProcessor;
-import stockprocessor.processor.StockDataReceiver;
-import stockprocessor.source.StockDataSource;
-import stockprocessor.stock.source.SourceManager;
+import stockprocessor.handler.processor.DataProcessor;
+import stockprocessor.handler.processor.ProcessorManager;
+import stockprocessor.handler.receiver.DataReceiver;
+import stockprocessor.handler.source.DataSource;
+import stockprocessor.handler.source.SourceManager;
+import stockprocessor.util.Pair;
 
 /**
  * @author anti
@@ -64,10 +70,7 @@ public class AddElementWindow extends JDialog
 
 	private DataSourcePanel sourcePanel;
 
-	// private JPanel targetPanel;
 	private ChartSelectorPanel targetPanel;
-
-	private JButton resetButton;
 
 	private JButton addButton;
 
@@ -177,6 +180,7 @@ public class AddElementWindow extends JDialog
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		dataPanel.add(buttonPanel);
 
+		JButton resetButton;
 		resetButton = new JButton(new AbstractAction("Reset values")
 		{
 			@Override
@@ -231,7 +235,7 @@ public class AddElementWindow extends JDialog
 		boolean isElementSelected = elementsList.getSelectedValue() != null;
 
 		// form buttons
-		resetButton.setEnabled(isElementSelected);
+		// resetButton.setEnabled(isElementSelected);
 		addButton.setEnabled(isElementSelected && sourcePanel.isSelected());
 	}
 
@@ -243,7 +247,7 @@ public class AddElementWindow extends JDialog
 		if (isElementSelected)
 		{
 			// create new properties (if required)
-			StockDataProcessor<?> stockDataProcessor = processorManager.getInstance(elementSelectedValue);
+			DataProcessor<?, ?> stockDataProcessor = processorManager.getInstance(elementSelectedValue);
 
 			descriptionTextField.setText(stockDataProcessor.getDescription());
 			parametersPanel.setStockDataProcessor(stockDataProcessor);
@@ -266,58 +270,68 @@ public class AddElementWindow extends JDialog
 	 */
 	private void addElement2Chart()
 	{
+		// create processor
+		DataProcessor<?, ?> stockDataProcessor = processorManager.getInstance((String) elementsList.getSelectedValue());
+
+		// apply the parameters
+		stockDataProcessor.setOptionalParameterInformations(parametersPanel.getParameters());
+		String name = stockDataProcessor.getName();
+
 		Chart chart = targetPanel.getChart();
 		log.debug("Useing chart [" + chart + "]");
 
-		// create processor
-		StockDataProcessor<?> stockDataProcessor = processorManager.getInstance((String) elementsList.getSelectedValue());
-
-		// apply the values
-		stockDataProcessor.setOptionalInputParameterInformations(parametersPanel.getParameters());
-
-		String instrument = sourcePanel.getInstrument();
-
 		// create element
-		ChartElement element = new ChartElement(instrument, (StockDataReceiver<StockData<?>>) stockDataProcessor);
-
-		StockDataSource stockDataSource = sourcePanel.getStockDataSource();
-		stockDataSource.registerDataReceiver(instrument, element);
-
-		sourceManager.registerElement(element);
-
-		chart.addElement(element);
-
-		// FIXME
-		BrokerElement<StockData<?>> brokerElement = new BrokerElement<StockData<?>>(new StockBroker<StockData<?>>()
+		Element element;
+		for (ParameterInformation outputParameterInformation : stockDataProcessor.getOutputParameterInformations())
 		{
-			@Override
-			public String getName()
+			switch (outputParameterInformation.getType())
 			{
-				return "test";
+			// case STOCK_ACTION:
+			// element = new BrokerElement<StockData<?>>(); TODO
+			// break;
+			case STOCK_DATA_INTEGER:
+				element = new TimeElement(name);
+				break;
+			case STOCK_DATA_CANDLE:
+				element = new CandleElement(name);
+				break;
+
+			default:
+				element = null;
+				break;
 			}
 
-			@Override
-			public StockAction newDataArrivedNotification(String instrument, StockData<?> stockData)
-			{
-				double random = Math.random();
+			// register element on processor
+			@SuppressWarnings("unchecked")
+			DataReceiver dataReceiver = (DataReceiver) element;
+			stockDataProcessor.registerDataReceiver(null, dataReceiver);
 
-				if (random > 0.88)
-				{
-					log.debug("BUY");
-					return StockAction.BUY;
-				}
-				if (random < 0.11)
-				{
-					log.debug("SELL");
-					return StockAction.SELL;
-				}
+			// register element
+			element.setPlot(chart.getPlot());
+			// chart.addElement(element);
+		}
 
-				log.debug("NOP");
-				return StockAction.NOP;
-			}
-		});
+		// FIXME block start
+		RandomBroker stockBroker = new RandomBroker();
+		stockBroker.setBrokerHouse(new SimpleBrokerHouse());
+		BrokerElement<StockData<?>> brokerElement = new BrokerElement<StockData<?>>(stockBroker);
 
-		chart.registerBrokerElement(brokerElement);
-		stockDataSource.registerDataReceiver(instrument, brokerElement);
+		brokerElement.setPlot(chart.getPlot());
+		// stockDataProcessor.registerDataReceiver(null, (DataReceiver)
+		// brokerElement);
+		// FIXME block start
+
+		// register on sources
+		Map<String, Object> inputParameters = sourcePanel.getParameters();
+		for (Entry<String, Object> inputParameter : inputParameters.entrySet())
+		{
+			@SuppressWarnings("unchecked")
+			Pair<String, String> pair = (Pair<String, String>) inputParameter.getValue();
+
+			// register the processor
+			@SuppressWarnings("unchecked")
+			DataSource stockDataSource = sourceManager.getInstance(pair.getFirst());
+			stockDataSource.registerDataReceiver(pair.getSecond(), stockDataProcessor);
+		}
 	}
 }

@@ -25,9 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.information.ListParameterInformation;
+import stockprocessor.data.information.NumberParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.RangeParameterInformation;
-import stockprocessor.processor.StockDataProcessor;
+import stockprocessor.handler.processor.DataProcessor;
 
 /**
  * @author anti
@@ -72,14 +73,14 @@ public class ProcessorParametersPanel extends JPanel
 		add(button);
 	}
 
-	public void setStockDataProcessor(StockDataProcessor<?> stockDataProcessor)
+	public void setStockDataProcessor(DataProcessor<?, ?> dataProcessor)
 	{
 		// clear properties
 		parameterInformations = null;
 
-		if (stockDataProcessor != null)
+		if (dataProcessor != null)
 		{
-			parameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
+			parameterInformations = dataProcessor.getOptionalParameterInformations();
 			log.debug("Optional-ParameterInfoList size:" + parameterInformations.size());
 		}
 
@@ -100,22 +101,25 @@ public class ProcessorParametersPanel extends JPanel
 			// OptInputParameterInfo optInputParameterInfo =
 			// coreMetaData.getOptInputParameterInfo(i);
 			ParameterInformation parameterInformation = parameterInformations.get(i);
+			if (!(parameterInformation instanceof NumberParameterInformation<?>))
+				continue;
 
-			log.debug(parameterInformation);
+			NumberParameterInformation<?> numberParameterInformation = (NumberParameterInformation<?>) parameterInformation;
+			log.debug(numberParameterInformation);
 
-			parametersPanel.add(new JLabel(parameterInformation.getDisplayName()));
+			parametersPanel.add(new JLabel(numberParameterInformation.getDisplayName()));
 
-			switch (parameterInformation.type())
+			switch (numberParameterInformation.getType())
 			{
 			// INTEGER_LIST
 			case LIST:
 			{
 				// IntegerList optInputIntegerList
 				// coreMetaData.getOptInputIntegerList(i);
-				ListParameterInformation listParameterInformation = (ListParameterInformation) parameterInformation;
+				ListParameterInformation<?> listParameterInformation = (ListParameterInformation<?>) numberParameterInformation;
 
 				JComboBox comboBox = new JComboBox(listParameterInformation.getStringValues());
-				comboBox.setSelectedItem("" + parameterInformation.getDefaultValue()); // FIXME
+				comboBox.setSelectedItem("" + numberParameterInformation.getDefaultValue()); // FIXME
 				comboBox.setPreferredSize(preferredSize);
 
 				parametersPanel.add(comboBox);
@@ -143,7 +147,7 @@ public class ProcessorParametersPanel extends JPanel
 				// IntegerRange optInputIntegerRange =
 				// coreMetaData.getOptInputIntegerRange(i);
 
-				RangeParameterInformation rangeParameterInformation = (RangeParameterInformation) parameterInformation;
+				RangeParameterInformation<?> rangeParameterInformation = (RangeParameterInformation<?>) numberParameterInformation;
 
 				double defaultValue = rangeParameterInformation.getDefaultValue().doubleValue();
 				double increment = rangeParameterInformation.getIncrement().doubleValue();
@@ -227,7 +231,7 @@ public class ProcessorParametersPanel extends JPanel
 
 			log.debug(parameterInformation);
 
-			switch (parameterInformation.type())
+			switch (parameterInformation.getType())
 			{
 			case LIST:
 			{

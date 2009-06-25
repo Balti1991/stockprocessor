@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.processor;
+package stockprocessor.handler.processor;
 
 import java.lang.annotation.IncompleteAnnotationException;
 import java.lang.reflect.Method;
@@ -12,6 +12,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import stockprocessor.handler.processor.DataProcessor;
+import stockprocessor.handler.processor.ProcessorManager;
+import stockprocessor.handler.receiver.DataReceiver;
 
 import com.tictactec.ta.lib.CoreAnnotated;
 import com.tictactec.ta.lib.RetCode;
@@ -174,7 +178,7 @@ public class TAProcessorManager extends ProcessorManager
 	 * String)
 	 */
 	@Override
-	public StockDataProcessor<?> getInstance(String stockDataProcessorName)
+	public DataProcessor<?, ?> getInstance(String stockDataProcessorName)
 	{
 		// add element
 		CoreMetaData2 coreMetaData = getCoreMetaData(stockDataProcessorName);
@@ -195,7 +199,7 @@ public class TAProcessorManager extends ProcessorManager
 		{
 			// candle
 			CandleCollectorStockDataProcessor candleDataCollector = new CandleCollectorStockDataProcessor();
-			candleDataCollector.setStockDataProcessor(element);
+			candleDataCollector.registerDataReceiver("", (DataReceiver) element); // FIXME
 			return candleDataCollector;
 		}
 

@@ -1,8 +1,7 @@
 /**
  * 
  */
-package stockprocessor.source;
-
+package stockprocessor.handler.source;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,8 +19,8 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 import org.apache.commons.lang.StringUtils;
 
 import stockprocessor.data.StockData;
-import stockprocessor.source.AbstractHtmlStockDataSource;
-import stockprocessor.source.ImportTimer;
+import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * @author anti
@@ -34,6 +33,8 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 
 	private final long timerStep = 1000 * 60;
 
+	private boolean timerEnabled = false;
+
 	public EbrokerHtmlStockDataSource()
 	{
 		new ImportTimer(getName(), timerStep)
@@ -43,7 +44,8 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 			{
 				try
 				{
-					parse();
+					if (timerEnabled)
+						parse();
 				}
 				catch (IOException e)
 				{
@@ -52,6 +54,21 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 				}
 			}
 		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.source.AbstractStockDataSource#registerDataReceiver(java
+	 * .lang.String, stockprocessor.processor.StockDataReceiver)
+	 */
+	@Override
+	public void registerDataReceiver(String instrument, DataReceiver<StockData<Integer>> dataReceiver)
+	{
+		super.registerDataReceiver(instrument, dataReceiver);
+
+		// start timer
+		timerEnabled = true;
 	}
 
 	/*
@@ -116,7 +133,7 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 						{
 							StockData<Integer> stockData = new StockData<Integer>(new Date(), Integer.parseInt(price), Long.parseLong(volume));
 
-							EbrokerHtmlStockDataSource.this.publishNewStockData(rowData.get(0), stockData);
+							EbrokerHtmlStockDataSource.this.publishNewData(rowData.get(0), stockData);
 
 							// System.out.println("New data for [" +
 							// rowData.get(0) + "]: " + stockData);
@@ -166,16 +183,6 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 		return "www.ebroker.hu";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.source.StockDataSource#getAvailableInstruments()
-	 */
-	@Override
-	public String[] getAvailableInstruments()
-	{
-		return instruments.toArray(new String[instruments.size()]);
-	}
-
 	public static void main(String[] a)
 	{
 		try
@@ -187,5 +194,28 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.source.AbstractDataSource#createOutputParameters()
+	 */
+	@Override
+	protected List<ParameterInformation> createOutputParameters()
+	{
+		// return instruments.toArray(new String[instruments.size()]);
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.data.handler.DataHandler#getDescription()
+	 */
+	@Override
+	public String getDescription()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.processor;
+package stockprocessor.handler.processor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Map;
 import stockprocessor.data.Candle;
 import stockprocessor.data.StockData;
 import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.data.information.ParameterInformation.ParameterType;
 
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
@@ -22,7 +23,7 @@ import com.tictactec.ta.lib.meta.annotation.OutputParameterInfo;
 /**
  * @author anti
  */
-public class TaProcessor implements StockDataProcessor<StockData<?>>
+public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?>>
 {
 	private final CoreMetaData2 coreMetaData;
 
@@ -77,18 +78,6 @@ public class TaProcessor implements StockDataProcessor<StockData<?>>
 
 	/*
 	 * (non-Javadoc)
-	 * @seehu.bogar.anti.stock.processor.StockDataProcessor#
-	 * getInputParameterInformations()
-	 */
-	@Override
-	public List<ParameterInformation> getInputParameterInformations()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see hu.bogar.anti.stock.processor.StockDataProcessor#getName()
 	 */
 	@Override
@@ -99,40 +88,14 @@ public class TaProcessor implements StockDataProcessor<StockData<?>>
 
 	/*
 	 * (non-Javadoc)
-	 * @seehu.bogar.anti.stock.processor.StockDataProcessor#
-	 * getOptionalInputParameterInformations()
-	 */
-	@Override
-	public List<ParameterInformation> getOptionalInputParameterInformations()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @seehu.bogar.anti.stock.processor.StockDataProcessor#
-	 * getOutputParameterInformations()
-	 */
-	@Override
-	public List<ParameterInformation> getOutputParameterInformations()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * hu.bogar.anti.stock.processor.StockDataReceiver#newDataArrivedNotification
 	 * (java.lang.String, hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public StockData<?> newDataArrivedNotification(String instrument, StockData<?> stockData)
+	public void newDataArrivedNotification(String instrument, StockData<?> stockData)
 	{
 		callFunc(stockData);
-
-		return null;
 	}
 
 	public List<Object> callFunc(StockData<?> stockData)
@@ -375,11 +338,56 @@ public class TaProcessor implements StockDataProcessor<StockData<?>>
 
 	/*
 	 * (non-Javadoc)
-	 * @seestockprocessor.processor.StockDataProcessor#
-	 * setOptionalInputParameterInformations(java.util.Map)
+	 * @see stockprocessor.handler.AbstractDataProcessor#createInputParameters()
 	 */
 	@Override
-	public void setOptionalInputParameterInformations(Map<String, Object> optInputParameters)
+	protected List<ParameterInformation> createInputParameters()
+	{
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
+
+		ParameterInformation parameterInformation = createParameterInformation("Input", ParameterType.STOCK_DATA);
+		list.add(parameterInformation);
+
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.AbstractDataProcessor#createOptionalParameters()
+	 */
+	@Override
+	protected List<ParameterInformation> createOptionalParameters()
+	{
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
+
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.AbstractDataProcessor#createOutputParameters()
+	 */
+	@Override
+	protected List<ParameterInformation> createOutputParameters()
+	{
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
+
+		ParameterInformation parameterInformation = createParameterInformation("Output", ParameterType.STOCK_DATA);
+		list.add(parameterInformation);
+
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.receiver.DataReceiver#setOptionalParameterInformations
+	 * (java.util.Map)
+	 */
+	@Override
+	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
 	{
 		// TODO Auto-generated method stub
 

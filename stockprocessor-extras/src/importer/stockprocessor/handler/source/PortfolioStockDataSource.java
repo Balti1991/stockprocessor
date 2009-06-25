@@ -1,8 +1,7 @@
 /**
  * 
  */
-package stockprocessor.source;
-
+package stockprocessor.handler.source;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,14 +15,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.CandleStockData;
-import stockprocessor.processor.StockDataReceiver;
-import stockprocessor.source.AbstractCsvStockDataSource;
+import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.processor.AbstractDataProcessor;
+import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * http://portfolio.hu/reszveny/adatletoltes.tdp?typ=txt&rv=MTELEKOM
@@ -32,9 +35,13 @@ import stockprocessor.source.AbstractCsvStockDataSource;
  */
 public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleStockData>
 {
-	/**
-	 * 
-	 */
+	protected String[] availableInstruments = new String[]
+		{"AAA", "ANY", "BIF", "BNPAGRI0111", "BOOK", "CSEPEL", "DANUBIUS", "ECONET", "EGIS", "EHEP", "ELMU", "EMASZ", "ETFBUXOTP", "EXTERNET",
+				"FEVITAN", "FHB", "FORRAS/OE", "FORRAS/T", "FOTEX", "FREESOFT", "GENESIS", "GSPARK", "HUMET", "KARPOT", "KONZUM", "KPACK", "LINAMAR",
+				"MOL", "MTELEKOM", "ORC", "OTP", "PANNERGY", "PANNUNION", "PFLAX", "PHYLAXIA", "PVALTO", "QUAESTOR", "RABA", "RFV", "RICHTER",
+				"SYNERGON", "TVK", "TVNETWORK", "ZWACK",//
+				"BUX0906", "BUX0907", "BUX0908", "BUX0909", "BUX0912", "BUX1003", "BUX1006", "BUX1012"};
+
 	private static final String CACHE_PATH = "./cache/Porfolio";
 
 	protected final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -121,20 +128,6 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 
 	/*
 	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.source.StockDataSource#getAvailableInstruments()
-	 */
-	@Override
-	public String[] getAvailableInstruments()
-	{
-		return new String[]
-			{"AAA", "ANY", "BIF", "BNPAGRI0111", "BOOK", "CSEPEL", "DANUBIUS", "ECONET", "EGIS", "EHEP", "ELMU", "EMASZ", "ETFBUXOTP", "EXTERNET",
-					"FEVITAN", "FHB", "FORRAS/OE", "FORRAS/T", "FOTEX", "FREESOFT", "GENESIS", "GSPARK", "HUMET", "KARPOT", "KONZUM", "KPACK",
-					"LINAMAR", "MOL", "MTELEKOM", "ORC", "OTP", "PANNERGY", "PANNUNION", "PFLAX", "PHYLAXIA", "PVALTO", "QUAESTOR", "RABA", "RFV",
-					"RICHTER", "SYNERGON", "TVK", "TVNETWORK", "ZWACK"};
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * hu.bogar.anti.stock.source.AbstractCsvStockDataSource#getFileName(java
 	 * .lang.String)
@@ -180,7 +173,12 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 		}
 	}
 
-	protected void downloadInstrument(String instrument) throws IOException
+	/**
+	 * @param instrument
+	 * @return
+	 * @throws IOException
+	 */
+	protected boolean downloadInstrument(String instrument) throws IOException
 	{
 		URL url;
 		BufferedInputStream inputStream = null;
@@ -200,6 +198,13 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 			{
 				outputStream.write(i);
 			}
+
+			return true;
+		}
+		catch (Exception e)
+		{
+			System.err.println("downloadInstrument: " + e.getMessage());
+			return false;
 		}
 		finally
 		{
@@ -275,10 +280,39 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	 * .anti.stock.processor.StockDataProcessor, java.io.Reader, char)
 	 */
 	@Override
-	protected void readFile(StockDataReceiver<CandleStockData> dataReceiver, Reader reader, char separator) throws IOException
+	protected void readFile(DataReceiver<CandleStockData> dataReceiver, Reader reader, char separator) throws IOException
 	{
 		counter = 0;
 
 		super.readFile(dataReceiver, reader, separator);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.source.AbstractDataSource#createOutputParameters()
+	 */
+	@Override
+	protected List<ParameterInformation> createOutputParameters()
+	{
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
+
+		for (String instrument : availableInstruments)
+		{
+			ParameterInformation parameterInformation = AbstractDataProcessor.createParameterInformation(instrument, ParameterType.STOCK_DATA);
+			list.add(parameterInformation);
+		}
+
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.data.handler.DataHandler#getDescription()
+	 */
+	@Override
+	public String getDescription()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

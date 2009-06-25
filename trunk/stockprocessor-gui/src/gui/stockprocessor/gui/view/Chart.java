@@ -21,11 +21,8 @@ import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.chart.event.ChartChangeEventType;
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.CandlestickRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
-import stockprocessor.gui.processor.BrokerElement;
-import stockprocessor.gui.processor.Element;
+import stockprocessor.gui.receiver.Element;
 
 /**
  * @author anti
@@ -63,22 +60,27 @@ public class Chart extends JComponent
 
 		// create XY plot
 		plot = new XYPlot();
+
 		// TODO add bar renderer support
 		// plot.setRenderer(PLOT_INDEX_INTEGER, new XYLineAndShapeRenderer(true,
 		// false));
 		// plot.setRenderer(PLOT_INDEX_OHLC, new CandlestickRenderer());
 
+		// X axis
 		ValueAxis timeAxis = new DateAxis("Time");
 		timeAxis.setLowerMargin(0.02); // reduce the default margins
 		timeAxis.setUpperMargin(0.02);
-		plot.setDomainAxis(timeAxis);
+		timeAxis.setAutoTickUnitSelection(true);
+		getPlot().setDomainAxis(timeAxis);
 
+		// Y axis
 		NumberAxis valueAxis = new NumberAxis("Value");
 		valueAxis.setAutoRangeIncludesZero(false); // override default
-		plot.setRangeAxis(valueAxis);
+		valueAxis.setAutoTickUnitSelection(true);
+		getPlot().setRangeAxis(valueAxis);
 
 		// set chart
-		chart = new JFreeChart(name, plot);
+		chart = new JFreeChart(name, getPlot());
 		chart.setBorderVisible(true);
 		chart.addChangeListener(new ChartChangeListener()
 		{
@@ -98,28 +100,6 @@ public class Chart extends JComponent
 	public List<Element> getElementList()
 	{
 		return elementList;
-	}
-
-	/**
-	 * @param element
-	 */
-	public void addElement(Element element)
-	{
-		// store in list
-		elementList.add(element);
-		int index = elementList.indexOf(element) * 2;
-
-		plot.setRenderer(index + PLOT_INDEX_INTEGER, new XYLineAndShapeRenderer(true, false));
-		plot.setRenderer(index + PLOT_INDEX_OHLC, new CandlestickRenderer());
-
-		// add to chart
-		plot.setDataset(index + PLOT_INDEX_OHLC, element.getDatasetOHLC());
-		plot.setDataset(index + PLOT_INDEX_INTEGER, element.getDatasetTime());
-	}
-
-	public void registerBrokerElement(BrokerElement brokerElement)
-	{
-		brokerElement.setPlot(plot);
 	}
 
 	/**
@@ -160,5 +140,13 @@ public class Chart extends JComponent
 	public String toString()
 	{
 		return getName();
+	}
+
+	/**
+	 * @return the plot
+	 */
+	public XYPlot getPlot()
+	{
+		return plot;
 	}
 }

@@ -1,13 +1,12 @@
-package stockprocessor.stock.source;
+package stockprocessor.handler.source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stockprocessor.gui.processor.ChartElement;
-import stockprocessor.source.RandomStockDataSource;
-import stockprocessor.source.StockDataSource;
+import stockprocessor.handler.source.DataSource;
+import stockprocessor.handler.source.RandomStockDataSource;
 
 /**
  * TODO register & unregister sources
@@ -16,7 +15,7 @@ import stockprocessor.source.StockDataSource;
  */
 public class SourceManager
 {
-	private final Map<String, StockDataSource<?>> sourceMap = new HashMap<String, StockDataSource<?>>();
+	private final Map<String, DataSource<?>> sourceMap = new HashMap<String, DataSource<?>>();
 
 	private final List<SourceManager> sourceManagerList = new ArrayList<SourceManager>();
 
@@ -25,13 +24,12 @@ public class SourceManager
 	 */
 	public SourceManager()
 	{
-		registerStockDataSource(new ChartElementDataSource()); // Chart elements
 		registerStockDataSource(new RandomStockDataSource(5, 5 * 1000)); // RND
 		// registerStockDataSource(new EbrokerHtmlStockDataSource()); // ebroker
 		// registerStockDataSource(new PortfolioStockDataSource()); // portfolio
 	}
 
-	public void registerStockDataSource(StockDataSource<?> stockDataSource)
+	public void registerStockDataSource(DataSource<?> stockDataSource)
 	{
 		sourceMap.put(stockDataSource.getName(), stockDataSource);
 	}
@@ -39,11 +37,6 @@ public class SourceManager
 	public void registerSourceManager(SourceManager sourceManager)
 	{
 		sourceManagerList.add(sourceManager);
-	}
-
-	public void registerElement(ChartElement element)
-	{
-		((ChartElementDataSource) getInstance(ChartElementDataSource.CHART_ELEMENTS)).registerElement(element);
 	}
 
 	public List<String> getAvailableSources()
@@ -64,9 +57,9 @@ public class SourceManager
 		return list;
 	}
 
-	public StockDataSource<?> getInstance(String stockDataSourceName)
+	public DataSource<?> getInstance(String stockDataSourceName)
 	{
-		StockDataSource<?> stockDataSource;
+		DataSource<?> stockDataSource;
 
 		// get from base list
 		stockDataSource = sourceMap.get(stockDataSourceName);

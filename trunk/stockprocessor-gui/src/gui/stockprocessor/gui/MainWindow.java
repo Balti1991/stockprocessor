@@ -4,9 +4,6 @@
 package stockprocessor.gui;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
@@ -15,13 +12,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import stockprocessor.data.StockData;
-import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.gui.view.ChartHolder;
-import stockprocessor.processor.CandleDataProcessorManager;
-import stockprocessor.processor.ProcessorManager;
-import stockprocessor.processor.StockDataProcessor;
-import stockprocessor.stock.source.SourceManager;
+import stockprocessor.handler.processor.DefaultProcessorManager;
+import stockprocessor.handler.processor.ProcessorManager;
+import stockprocessor.handler.source.SourceManager;
 
 /**
  * @author anti
@@ -50,52 +44,7 @@ public class MainWindow extends JFrame
 
 		pack();
 
-		// processorManager.registerStockDataProcessor(new
-		// CandleCollectorStockDataProcessor(1000 * 30));
-		processorManager.registerProcessorManager(new CandleDataProcessorManager());
-		processorManager.registerStockDataProcessor(new StockDataProcessor<StockData<?>>()
-		{
-			@Override
-			public String getDescription()
-			{
-				return "Direct visualizer";
-			}
-
-			@Override
-			public List<ParameterInformation> getInputParameterInformations()
-			{
-				return new ArrayList<ParameterInformation>();
-			}
-
-			@Override
-			public String getName()
-			{
-				return "Direct visualizer";
-			}
-
-			@Override
-			public List<ParameterInformation> getOptionalInputParameterInformations()
-			{
-				return new ArrayList<ParameterInformation>();
-			}
-
-			@Override
-			public List<ParameterInformation> getOutputParameterInformations()
-			{
-				return new ArrayList<ParameterInformation>();
-			}
-
-			@Override
-			public StockData<?> newDataArrivedNotification(String instrument, StockData<?> stockData)
-			{
-				return stockData;
-			}
-
-			@Override
-			public void setOptionalInputParameterInformations(Map<String, Object> optInputParameters)
-			{
-			}
-		});
+		processorManager.registerProcessorManager(new DefaultProcessorManager());
 	}
 
 	public static void main(String[] args)

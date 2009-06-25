@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.processor;
+package stockprocessor.handler.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +11,15 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author anti
  */
-public class CandleDataProcessorManager extends ProcessorManager
+public class DefaultProcessorManager extends ProcessorManager
 {
 	private final ArrayList<String> processorList;
 
-	public CandleDataProcessorManager()
+	public DefaultProcessorManager()
 	{
 		processorList = new ArrayList<String>();
-		processorList.add(CandleCollectorStockDataProcessor.CANDLE_DATA_NAME);
+		processorList.add(CandleCollectorStockDataProcessor.PROCESSOR_NAME);
+		processorList.add(NumberStockDataProcessor.PROCESSOR_NAME);
 	}
 
 	/*
@@ -28,10 +29,12 @@ public class CandleDataProcessorManager extends ProcessorManager
 	 * String)
 	 */
 	@Override
-	public StockDataProcessor<?> getInstance(String stockDataProcessorName)
+	public DataProcessor<?, ?> getInstance(String stockDataProcessorName)
 	{
-		if (StringUtils.equals(CandleCollectorStockDataProcessor.CANDLE_DATA_NAME, stockDataProcessorName))
+		if (StringUtils.equals(CandleCollectorStockDataProcessor.PROCESSOR_NAME, stockDataProcessorName))
 			return new CandleCollectorStockDataProcessor();
+		else if (StringUtils.equals(NumberStockDataProcessor.PROCESSOR_NAME, stockDataProcessorName))
+			return new NumberStockDataProcessor();
 		else
 			return null;
 	}

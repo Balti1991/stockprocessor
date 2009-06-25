@@ -3,7 +3,7 @@
  */
 package stockprocessor.cli;
 
-import stockprocessor.processor.StockAction;
+import stockprocessor.handler.StockAction;
 
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
@@ -18,6 +18,11 @@ public class CliHelper
 
 	protected CliHelper()
 	{
+	}
+
+	public StockAction t3(double[] inArray)
+	{
+		return movingAverage(MAType.T3, inArray);
 	}
 
 	public StockAction sma(double[] inArray)
@@ -53,21 +58,63 @@ public class CliHelper
 		// process result
 		double result = outReal[outNbElement.value - 1];
 
-		return evaulateMovingAverage(result);
+		return StockBrokerHelper.instance.evaluateMovingAverage(result);
 	}
 
-	/**
-	 * @param result
-	 * @return
-	 */
-	protected StockAction evaulateMovingAverage(double result)
+	protected StockAction trix(double[] inArray, int optInTimePeriod)
 	{
-		if (result > 0)
-			return StockAction.BUY;
-		else if (result < 0)
-			return StockAction.SELL;
-		else
-			return StockAction.NOP;
+		Core core = new Core();
+
+		MInteger outBegIdx = new MInteger();
+		outBegIdx.value = 0;
+
+		MInteger outNbElement = new MInteger();
+		outNbElement.value = inArray.length - 0;
+
+		double[] outReal = new double[inArray.length - 0];
+
+		// startIdx, endIdx, inReal, optInTimePeriod,
+		// outBegIdx, outNBElement, outReal
+		core.trix(0, inArray.length - 1,//
+				inArray, //
+				optInTimePeriod, //
+				outBegIdx, outNbElement, outReal);
+
+		if (outNbElement.value == 0)
+			throw new RuntimeException("No result for TRIX");
+
+		// process result
+		double result = outReal[outNbElement.value - 1];
+
+		return StockBrokerHelper.instance.evaluateTrix(result);
+	}
+
+	protected StockAction rsi(double[] inArray, int optInTimePeriod)
+	{
+		Core core = new Core();
+
+		MInteger outBegIdx = new MInteger();
+		outBegIdx.value = 0;
+
+		MInteger outNbElement = new MInteger();
+		outNbElement.value = inArray.length - 0;
+
+		double[] outReal = new double[inArray.length - 0];
+
+		// startIdx, endIdx, inReal, optInTimePeriod,
+		// outBegIdx, outNBElement, outReal
+		core.rsi(0, inArray.length - 1,//
+				inArray, //
+				optInTimePeriod, //
+				outBegIdx, outNbElement, outReal);
+
+		if (outNbElement.value == 0)
+			throw new RuntimeException("No result for TRIX");
+
+		// process result
+		double result = outReal[outNbElement.value - 1];
+
+		return StockBrokerHelper.instance.evaluatRsi(result);
 	}
 
 	protected StockAction stoch(double[] inArray, double[] inHigh, double[] inLow, double[] inClose, //
@@ -100,21 +147,6 @@ public class CliHelper
 		double resultK = outSlowK[outNBElement.value - 1];
 		double resultD = outSlowD[outNBElement.value - 1];
 
-		return evaulateStock(resultK, resultD);
-	}
-
-	/**
-	 * @param resultK
-	 * @param resultD
-	 * @return
-	 */
-	protected StockAction evaulateStock(double resultK, double resultD)
-	{
-		if (resultK > resultD)
-			return StockAction.BUY;
-		else if (resultK < resultD)
-			return StockAction.SELL;
-		else
-			return StockAction.NOP;
+		return StockBrokerHelper.instance.evaluateStochastic(resultK, resultD);
 	}
 }

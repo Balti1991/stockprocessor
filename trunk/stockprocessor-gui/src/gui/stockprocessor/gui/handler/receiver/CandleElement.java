@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.gui.receiver;
+package stockprocessor.gui.handler.receiver;
 
 import java.util.ArrayList;
 import java.util.List;

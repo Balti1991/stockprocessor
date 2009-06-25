@@ -33,13 +33,13 @@ import stockprocessor.broker.RandomBroker;
 import stockprocessor.broker.SimpleBrokerHouse;
 import stockprocessor.data.StockData;
 import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.gui.handler.receiver.BrokerElement;
+import stockprocessor.gui.handler.receiver.CandleElement;
+import stockprocessor.gui.handler.receiver.Element;
+import stockprocessor.gui.handler.receiver.TimeElement;
 import stockprocessor.gui.panel.ChartSelectorPanel;
 import stockprocessor.gui.panel.DataSourcePanel;
 import stockprocessor.gui.panel.ProcessorParametersPanel;
-import stockprocessor.gui.receiver.BrokerElement;
-import stockprocessor.gui.receiver.CandleElement;
-import stockprocessor.gui.receiver.Element;
-import stockprocessor.gui.receiver.TimeElement;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
 import stockprocessor.handler.processor.DataProcessor;
@@ -274,7 +274,7 @@ public class AddElementWindow extends JDialog
 		DataProcessor<?, ?> stockDataProcessor = processorManager.getInstance((String) elementsList.getSelectedValue());
 
 		// apply the parameters
-		stockDataProcessor.setOptionalParameterInformations(parametersPanel.getParameters());
+		stockDataProcessor.setOptionalParameters(parametersPanel.getParameters());
 		String name = stockDataProcessor.getName();
 
 		Chart chart = targetPanel.getChart();
@@ -282,7 +282,7 @@ public class AddElementWindow extends JDialog
 
 		// create element
 		Element element;
-		for (ParameterInformation outputParameterInformation : stockDataProcessor.getOutputParameterInformations())
+		for (ParameterInformation outputParameterInformation : stockDataProcessor.getOutputParameters())
 		{
 			switch (outputParameterInformation.getType())
 			{

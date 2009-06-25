@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.gui.receiver;
+package stockprocessor.gui.handler.receiver;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -147,7 +147,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 	 * stockprocessor.data.handler.DataReceiver#getInputParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getInputParameterInformations()
+	public List<ParameterInformation> getInputParameters()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -160,7 +160,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 	 * ()
 	 */
 	@Override
-	public List<ParameterInformation> getOptionalParameterInformations()
+	public List<ParameterInformation> getOptionalParameters()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -173,7 +173,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 	 * (java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// TODO Auto-generated method stub
 

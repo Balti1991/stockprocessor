@@ -22,7 +22,7 @@ import org.jfree.chart.event.ChartChangeEventType;
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.plot.XYPlot;
 
-import stockprocessor.gui.receiver.Element;
+import stockprocessor.gui.handler.receiver.Element;
 
 /**
  * @author anti

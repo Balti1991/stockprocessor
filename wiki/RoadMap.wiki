@@ -8,9 +8,12 @@ This is not exactly a road-map, because the project is in very early state, so w
 
 = TODO =
 
-  * refact: new conception about _DataHandler_
+  * refact: new conception about _DataHandler_ OK
   * migrate _Broker_ object into _DataProcessor_
-  * fix: chart/chart element remove
+  * fix: chart/element remove window
   * new: chart element types for source types (int, candle, action, etc.) to visualize
+    * in progress...
+    * Number, Candle, Action are finished
+    * new types/ideas? -new Action with icons
   * new: broker creator window
   * new: broker xml save/load function

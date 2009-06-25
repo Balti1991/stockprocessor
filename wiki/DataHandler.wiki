@@ -12,13 +12,15 @@ There is a third type of handlers, the mixture of previous two: the *[DataHandle
   * *Name* short name of handler
   * *Description* description about handler
 
-= DataSource =
+== DataSource ==
 The source of StockDatas. It generates the input information to the application from the outer world (for example a CSV file, a web page, etc.). For test purpose there is a RandomDataSource.
-== Structure ==
+=== Structure ===
 The source must define its output parameters: the name of instruments, and the type of data.
 
-= DataReceiver =
+== DataReceiver ==
 TODO
+=== Structure ===
 
-= DataProcessor =
+== DataProcessor ==
 TODO
+=== Structure ===

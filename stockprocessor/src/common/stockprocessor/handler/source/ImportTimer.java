@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.source;
+package stockprocessor.handler.source;
 
 import java.util.Date;
 import java.util.Timer;

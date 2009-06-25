@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.source;
+package stockprocessor.handler.source;
 
 
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ import stockprocessor.data.StockData;
 /**
  * @author anti
  */
-public abstract class AbstractHtmlStockDataSource<SD extends StockData<?>> extends AbstractStockDataSource<SD>
+public abstract class AbstractHtmlStockDataSource<SD extends StockData<?>> extends AbstractDataSource<SD>
 {
 	public void parse() throws IOException
 	{

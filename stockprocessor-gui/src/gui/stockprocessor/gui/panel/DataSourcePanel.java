@@ -110,7 +110,7 @@ public class DataSourcePanel extends JPanel
 				{
 					// get source
 					DataSource<?> stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
-					for (ParameterInformation parameterInformation : stockDataSource.getOutputParameterInformations())
+					for (ParameterInformation parameterInformation : stockDataSource.getOutputParameters())
 					{
 						instrumentComboBox.addItem(parameterInformation.getDisplayName());
 					}
@@ -153,7 +153,7 @@ public class DataSourcePanel extends JPanel
 		if (stockDataProcessor == null)
 			return;
 
-		parameterInformations.addAll(stockDataProcessor.getInputParameterInformations());
+		parameterInformations.addAll(stockDataProcessor.getInputParameters());
 		log.debug("Input ParameterInfoList size:" + parameterInformations.size());
 
 		for (Iterator<ParameterInformation> iterator = parameterInformations.iterator(); iterator.hasNext();)

@@ -6,7 +6,7 @@ package stockprocessor.data.information;
 /**
  * @author anti
  */
-public interface ListParameterInformation<V extends Number> extends ParameterInformation<V>
+public interface ListParameterInformation<V extends Number> extends NumberParameterInformation<V>
 {
 	/**
 	 * the value list

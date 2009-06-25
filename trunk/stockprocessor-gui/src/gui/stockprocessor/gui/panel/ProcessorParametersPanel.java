@@ -80,7 +80,7 @@ public class ProcessorParametersPanel extends JPanel
 
 		if (dataProcessor != null)
 		{
-			parameterInformations = dataProcessor.getOptionalParameterInformations();
+			parameterInformations = dataProcessor.getOptionalParameters();
 			log.debug("Optional-ParameterInfoList size:" + parameterInformations.size());
 		}
 

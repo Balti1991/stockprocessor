@@ -9,7 +9,7 @@ This is not exactly a road-map, because the project is in very early state, so w
 = TODO =
 
   * refact: new conception about _DataHandler_ OK
-  * migrate _Broker_ object into _DataProcessor_
+  * migrate _Broker_ object into _[DataHandler#DataProcessor DataProcessor]_
   * fix: chart/element remove window
   * new: chart element types for source types (int, candle, action, etc.) to visualize
     * in progress...

@@ -3,7 +3,7 @@
  */
 package stockprocessor.broker;
 
-import stockprocessor.processor.StockAction;
+import stockprocessor.handler.StockAction;
 
 /**
  * @author anti
@@ -11,18 +11,15 @@ import stockprocessor.processor.StockAction;
 public interface StockBrokerHouse
 {
 	/**
-	 * gives a bay trigger for the broker, to execute a default bay transaction
-	 */
-	public void bay();
-
-	/**
-	 * gives a sell trigger for the broker, to execute a default sell
-	 * transaction
-	 */
-	public void sell();
-
-	/**
 	 * gives a bay or sell trigger for the broker, to execute the transaction
+	 * 
+	 * @param action
+	 * @param instrumentum
+	 * @param price
+	 * @param amount
+	 * @param stopLimit
 	 */
-	public void transfer(StockAction action, int price, int amount, Integer stopLimit);
+	public void transfer(StockAction action, String instrument, int price, int amount, Integer stopLimit);
+
+	public int getOwnedAmount(String instrument);
 }

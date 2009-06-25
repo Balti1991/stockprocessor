@@ -1,0 +1,24 @@
+#summary StockData handlers like receiver, source, processor
+#labels todo
+
+= DataHandler =
+
+The StockData handler classes are the DataHandler-s. There are two types of handlers:
+  * data senders: producers of data - *[DataHandler#DataSource DataSource]*
+  * data receivers: the consumer of data - *[DataHandler#DataReceiver DataReceiver]*
+There is a third type of handlers, the mixture of previous two: the *[DataHandler#DataProcessor DataProcessor]*. It's a receiver which transforms the input data, and generates new one.
+
+== Structure ==
+  * *Name* short name of handler
+  * *Description* description about handler
+
+= DataSource =
+The source of StockDatas. It generates the input information to the application from the outer world (for example a CSV file, a web page, etc.). For test purpose there is a RandomDataSource.
+== Structure ==
+The source must define its output parameters: the name of instruments, and the type of data.
+
+= DataReceiver =
+TODO
+
+= DataProcessor =
+TODO

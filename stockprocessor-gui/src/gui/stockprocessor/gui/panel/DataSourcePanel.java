@@ -6,8 +6,10 @@ package stockprocessor.gui.panel;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,23 +22,26 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.processor.StockDataProcessor;
-import stockprocessor.source.StockDataSource;
-import stockprocessor.stock.source.SourceManager;
+import stockprocessor.handler.processor.DataProcessor;
+import stockprocessor.handler.source.DataSource;
+import stockprocessor.handler.source.SourceManager;
+import stockprocessor.util.Pair;
 
 /**
  * @author anti
  */
 public class DataSourcePanel extends JPanel
 {
+	private static final long serialVersionUID = 3284774977493459651L;
+
 	/**
 	 * Logger for this class
 	 */
 	private static final Log log = LogFactory.getLog(DataSourcePanel.class);
 
-	private final SourceManager sourceManager;
+	private final List<ParameterInformation> parameterInformations = new ArrayList<ParameterInformation>();
 
-	private List<ParameterInformation> parameterInformations = null;
+	private final Map<String, Pair<String, String>> parameterMap = new HashMap<String, Pair<String, String>>();
 
 	private final JComboBox parameterComboBox;
 
@@ -49,8 +54,6 @@ public class DataSourcePanel extends JPanel
 	 */
 	public DataSourcePanel(final SourceManager sourceManager)
 	{
-		this.sourceManager = sourceManager;
-
 		setBorder(BorderFactory
 				.createCompoundBorder(BorderFactory.createTitledBorder("Data Source"), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		setLayout(new GridLayout(0, 2));
@@ -66,7 +69,18 @@ public class DataSourcePanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO
+				boolean selected = parameterComboBox.getSelectedIndex() > -1;
+
+				sourceComboBox.setSelectedIndex(-1);
+				sourceComboBox.setEnabled(selected);
+
+				String selectedParameter = (String) parameterComboBox.getSelectedItem();
+				if (selected && parameterMap.containsKey(selectedParameter))
+				{
+					Pair<String, String> pair = parameterMap.get(selectedParameter);
+					sourceComboBox.setSelectedItem(pair.getFirst());
+					instrumentComboBox.setSelectedItem(pair.getSecond());
+				}
 			}
 		});
 		add(parameterComboBox);
@@ -75,8 +89,9 @@ public class DataSourcePanel extends JPanel
 		JLabel sourceLabel = new JLabel("Source");
 		add(sourceLabel);
 
-		sourceComboBox = new JComboBox(getAvailableSources());
+		sourceComboBox = new JComboBox(getAvailableSources(sourceManager));
 		sourceComboBox.setSelectedIndex(-1);
+		sourceComboBox.setEnabled(false);
 		sourceComboBox.addActionListener(new ActionListener()
 		{
 			@Override
@@ -84,22 +99,25 @@ public class DataSourcePanel extends JPanel
 			{
 				boolean selected = sourceComboBox.getSelectedIndex() > -1;
 
+				// update map
+				Pair<String, String> pair = new Pair<String, String>((String) sourceComboBox.getSelectedItem(), null);
+				parameterMap.put((String) parameterComboBox.getSelectedItem(), pair);
+
+				// update components
 				instrumentComboBox.removeAllItems();
 
 				if (selected)
 				{
 					// get source
-					StockDataSource stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
-					String[] availableInstruments = stockDataSource.getAvailableInstruments();
-					for (String instrument : availableInstruments)
+					DataSource<?> stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
+					for (ParameterInformation parameterInformation : stockDataSource.getOutputParameterInformations())
 					{
-						instrumentComboBox.addItem(instrument);
+						instrumentComboBox.addItem(parameterInformation.getDisplayName());
 					}
 					instrumentComboBox.setSelectedIndex(-1);
 				}
 
 				instrumentComboBox.setEnabled(selected);
-				// updateButtons();
 			}
 		});
 		add(sourceComboBox);
@@ -110,27 +128,39 @@ public class DataSourcePanel extends JPanel
 
 		instrumentComboBox = new JComboBox();
 		instrumentComboBox.setEnabled(false);
+		instrumentComboBox.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				// update map
+				Pair<String, String> pair = parameterMap.get(parameterComboBox.getSelectedItem());
+				pair.setSecond((String) instrumentComboBox.getSelectedItem());
+			}
+		});
 		add(instrumentComboBox);
 	}
 
-	public void setStockDataProcessor(StockDataProcessor<?> stockDataProcessor)
+	public void setStockDataProcessor(DataProcessor<?, ?> stockDataProcessor)
 	{
 		// clear properties
-		// TODO clear map & disable
+		// clear map & disable
+		parameterMap.clear();
+		parameterInformations.clear();
+		parameterComboBox.removeAllItems();
 
 		// finish if no processor
 		if (stockDataProcessor == null)
 			return;
 
-		parameterInformations = stockDataProcessor.getInputParameterInformations();
+		parameterInformations.addAll(stockDataProcessor.getInputParameterInformations());
+		log.debug("Input ParameterInfoList size:" + parameterInformations.size());
 
-		// int nbOptInput = coreMetaData.getFuncInfo().nbOptInput();
-		List<ParameterInformation> parameterInformations = stockDataProcessor.getOptionalInputParameterInformations();
-		log.debug("Input-ParameterInfoList size:" + parameterInformations.size());
-
-		for (int i = 0; i < parameterInformations.size(); i++)
+		for (Iterator<ParameterInformation> iterator = parameterInformations.iterator(); iterator.hasNext();)
 		{
-			// TODO
+			ParameterInformation parameterInformation = iterator.next();
+
+			parameterComboBox.addItem(parameterInformation.getDisplayName());
 		}
 	}
 
@@ -139,9 +169,20 @@ public class DataSourcePanel extends JPanel
 		// create the collector map
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		for (int i = 0; i < parameterInformations.size(); i++)
+		for (Iterator<ParameterInformation> parameterIterater = parameterInformations.iterator(); parameterIterater.hasNext();)
 		{
-			// TODO
+			ParameterInformation paramter = parameterIterater.next();
+
+			String name = paramter.getDisplayName();
+			if (parameterMap.containsKey(name))
+			{
+				Pair<String, String> pair = parameterMap.get(name);
+				parameters.put(name, pair);
+			}
+			else
+			{
+				parameters.put(name, new Pair<String, String>(null, null));
+			}
 		}
 
 		return parameters;
@@ -157,7 +198,7 @@ public class DataSourcePanel extends JPanel
 	/**
 	 * @return
 	 */
-	private Object[] getAvailableSources()
+	private Object[] getAvailableSources(SourceManager sourceManager)
 	{
 		Object[] sources = sourceManager.getAvailableSources().toArray();
 		Arrays.sort(sources);
@@ -166,23 +207,6 @@ public class DataSourcePanel extends JPanel
 	}
 
 	@Deprecated
-	public StockDataSource<?> getStockDataSource()
-	{
-		if (!isSelected())
-			return null;
-
-		return sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
-	}
-
-	@Deprecated
-	public String getInstrument()
-	{
-		if (!isSelected())
-			return null;
-
-		return (String) instrumentComboBox.getSelectedItem();
-	}
-
 	public boolean isSelected()
 	{
 		// FIXME from map

@@ -31,7 +31,7 @@ public class DefaultListParameterInformation<V extends Number> extends DefaultPa
 	 * @see hu.bogar.anti.stock.data.information.ParameterInformation#type()
 	 */
 	@Override
-	public ParameterType type()
+	public ParameterType getType()
 	{
 		return ParameterType.LIST;
 	}

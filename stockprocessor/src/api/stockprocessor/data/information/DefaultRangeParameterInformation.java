@@ -39,7 +39,7 @@ public class DefaultRangeParameterInformation<V extends Number> extends DefaultP
 	 * @see hu.bogar.anti.stock.data.information.ParameterInformation#type()
 	 */
 	@Override
-	public ParameterType type()
+	public ParameterType getType()
 	{
 		return ParameterType.RANGE;
 	}

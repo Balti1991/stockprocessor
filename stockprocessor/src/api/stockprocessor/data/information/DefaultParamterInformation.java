@@ -3,10 +3,12 @@
  */
 package stockprocessor.data.information;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * @author anti
  */
-public abstract class DefaultParamterInformation<V extends Number> implements ParameterInformation<V>
+public abstract class DefaultParamterInformation<V extends Number> implements NumberParameterInformation<V>
 {
 	private final V defaultValue;
 
@@ -42,5 +44,15 @@ public abstract class DefaultParamterInformation<V extends Number> implements Pa
 	public String getDisplayName()
 	{
 		return displayName;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return new ToStringBuilder(this).append(displayName).append(defaultValue).toString();
 	}
 }

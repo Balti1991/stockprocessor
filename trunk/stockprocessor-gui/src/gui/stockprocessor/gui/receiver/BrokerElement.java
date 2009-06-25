@@ -1,23 +1,26 @@
 /**
  * 
  */
-package stockprocessor.gui.processor;
+package stockprocessor.gui.receiver;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.List;
+import java.util.Map;
 
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.XYPlot;
 
 import stockprocessor.broker.StockBroker;
 import stockprocessor.data.StockData;
-import stockprocessor.processor.StockAction;
-import stockprocessor.processor.StockDataReceiver;
+import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.handler.StockAction;
+import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * @author anti
  */
-public class BrokerElement<SD extends StockData<?>> implements StockDataReceiver<SD>
+public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 {
 	private Boolean longPosition = null;
 
@@ -49,11 +52,11 @@ public class BrokerElement<SD extends StockData<?>> implements StockDataReceiver
 	 * (java.lang.String, stockprocessor.data.StockData)
 	 */
 	@Override
-	public StockData<?> newDataArrivedNotification(String instrument, SD stockData)
+	public void newDataArrivedNotification(String instrument, SD stockData)
 	{
 		// if not on chart skip data
 		if (plot == null)
-			return null;
+			return;
 
 		StockAction stockAction = stockBroker.newDataArrivedNotification(instrument, stockData);
 
@@ -108,7 +111,7 @@ public class BrokerElement<SD extends StockData<?>> implements StockDataReceiver
 			break;
 		}
 
-		return stockData;
+		// return stockData;
 	}
 
 	private void createMarker(SD stockData, Paint paint)
@@ -136,5 +139,54 @@ public class BrokerElement<SD extends StockData<?>> implements StockDataReceiver
 	public XYPlot getPlot()
 	{
 		return plot;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.data.handler.DataReceiver#getInputParameterInformations()
+	 */
+	@Override
+	public List<ParameterInformation> getInputParameterInformations()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.data.handler.DataReceiver#getOptionalParameterInformations
+	 * ()
+	 */
+	@Override
+	public List<ParameterInformation> getOptionalParameterInformations()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.data.handler.DataReceiver#setOptionalParameterInformations
+	 * (java.util.Map)
+	 */
+	@Override
+	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.data.handler.DataHandler#getDescription()
+	 */
+	@Override
+	public String getDescription()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

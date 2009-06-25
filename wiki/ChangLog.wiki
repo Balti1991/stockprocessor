@@ -1,5 +1,7 @@
 #summary Short log of changes in the program
 
+=2009.06.25.=
+  * handler change finished
 =2009.06.23.=
   * decided: the broker objects are simply a special receiver or processor objects, like the others
   * handler: data handler object

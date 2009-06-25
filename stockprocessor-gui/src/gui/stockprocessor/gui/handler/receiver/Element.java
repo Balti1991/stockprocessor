@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.gui.receiver;
+package stockprocessor.gui.handler.receiver;
 
 import org.jfree.chart.plot.XYPlot;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.gui.receiver;
+package stockprocessor.gui.handler.receiver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public abstract class BaseElement extends AbstractDataReceiver<StockData<?>> imp
 	 * (java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// NOP
 	}

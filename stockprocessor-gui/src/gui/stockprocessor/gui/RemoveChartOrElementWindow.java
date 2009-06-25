@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import stockprocessor.gui.receiver.Element;
+import stockprocessor.gui.handler.receiver.Element;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
 

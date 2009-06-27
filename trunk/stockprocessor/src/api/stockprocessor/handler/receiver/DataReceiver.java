@@ -19,27 +19,27 @@ public interface DataReceiver<I> extends DataHandler
 	 * 
 	 * @return
 	 */
-	public List<ParameterInformation> getInputParameterInformations();
+	public List<ParameterInformation> getInputParameters();
 
 	/**
 	 * the list of optional parameters descriptions
 	 * 
 	 * @return
 	 */
-	public List<ParameterInformation> getOptionalParameterInformations();
+	public List<ParameterInformation> getOptionalParameters();
 
 	/**
 	 * point to calibrate optional input parameters
 	 * 
 	 * @param optInputParameters the map of changeable parameters
 	 */
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters);
+	public void setOptionalParameters(Map<String, Object> optionalParameters);
 
 	/**
 	 * method where the receiver get the data
 	 * 
-	 * @param instrument the instruments name
+	 * @param input the instruments name
 	 * @param inputData the data
 	 */
-	public void newDataArrivedNotification(String instrument, I inputData);
+	public void newDataArrivedNotification(String input, I inputData);
 }

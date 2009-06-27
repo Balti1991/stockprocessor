@@ -3,7 +3,7 @@
 	<groupId>stockprocessor</groupId>
 	<artifactId>stockprocessor</artifactId>
 	<name>StockProcessor</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<description>StockProcessor base</description>
 	<url>http://code.google.com/p/stockprocessor/</url>
 	<issueManagement>

@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
@@ -35,7 +35,7 @@ public class TaLibElementBase // extends BaseElement
 
 	private int dataCount = 0;
 
-	private StockData<?>[] lookbackQueue = null;
+	private ShareData<?>[] lookbackQueue = null;
 
 	private final List<Object> optInputParameters;
 
@@ -76,10 +76,10 @@ public class TaLibElementBase // extends BaseElement
 
 		// create it if not exists or different
 		if (lookbackQueue == null || lookbackQueue.length != lookback + 1)
-			lookbackQueue = new StockData[lookback + 1];
+			lookbackQueue = new ShareData[lookback + 1];
 	}
 
-	public List<Object> callFunc(StockData<?> stockData)
+	public List<Object> callFunc(ShareData<?> stockData)
 	{
 		FuncInfo funcInfo = coreMetaData.getFuncInfo();
 
@@ -312,7 +312,7 @@ public class TaLibElementBase // extends BaseElement
 	/**
 	 * @return the lookbackQueue
 	 */
-	protected StockData<?>[] getLookbackQueue()
+	protected ShareData<?>[] getLookbackQueue()
 	{
 		return lookbackQueue;
 	}

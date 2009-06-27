@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.broker.RandomBroker;
 import stockprocessor.broker.SimpleBrokerHouse;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.gui.handler.receiver.BrokerElement;
 import stockprocessor.gui.handler.receiver.CandleElement;
@@ -314,7 +314,7 @@ public class AddElementWindow extends JDialog
 		// FIXME block start
 		RandomBroker stockBroker = new RandomBroker();
 		stockBroker.setBrokerHouse(new SimpleBrokerHouse());
-		BrokerElement<StockData<?>> brokerElement = new BrokerElement<StockData<?>>(stockBroker);
+		BrokerElement<ShareData<?>> brokerElement = new BrokerElement<ShareData<?>>(stockBroker);
 
 		brokerElement.setPlot(chart.getPlot());
 		// stockDataProcessor.registerDataReceiver(null, (DataReceiver)

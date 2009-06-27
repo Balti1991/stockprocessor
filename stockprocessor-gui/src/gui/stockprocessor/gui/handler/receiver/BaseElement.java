@@ -10,14 +10,14 @@ import java.util.Map;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.Second;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.receiver.AbstractDataReceiver;
 
 /**
  * @author anti
  */
-public abstract class BaseElement extends AbstractDataReceiver<StockData<?>> implements Element
+public abstract class BaseElement extends AbstractDataReceiver<ShareData<?>> implements Element
 {
 	protected final String instrument;
 
@@ -29,9 +29,9 @@ public abstract class BaseElement extends AbstractDataReceiver<StockData<?>> imp
 		this.instrument = instrument;
 	}
 
-	protected RegularTimePeriod getTimePeriod(StockData<?> stockData)
+	protected RegularTimePeriod getTimePeriod(ShareData<?> stockData)
 	{
-		return new Second(stockData.getTime());
+		return new Second(stockData.getTimeStamp());
 	}
 
 	@Override

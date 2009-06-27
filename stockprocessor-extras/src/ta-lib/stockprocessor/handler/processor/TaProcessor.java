@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 
@@ -23,7 +23,7 @@ import com.tictactec.ta.lib.meta.annotation.OutputParameterInfo;
 /**
  * @author anti
  */
-public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?>>
+public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?>>
 {
 	private final CoreMetaData2 coreMetaData;
 
@@ -33,7 +33,7 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 
 	private int dataCount = 0;
 
-	private StockData<?>[] lookbackQueue = null;
+	private ShareData<?>[] lookbackQueue = null;
 
 	public TaProcessor(CoreMetaData2 coreMetaData, List<Object> optInputParameters)
 	{
@@ -62,7 +62,7 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 
 		// create it if not exists or different
 		if (lookbackQueue == null || lookbackQueue.length != lookback + 1)
-			lookbackQueue = new StockData[lookback + 1];
+			lookbackQueue = new ShareData[lookback + 1];
 	}
 
 	/*
@@ -93,12 +93,12 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 	 * (java.lang.String, hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String input, StockData<?> stockData)
+	public void newDataArrivedNotification(String input, ShareData<?> stockData)
 	{
 		callFunc(stockData);
 	}
 
-	public List<Object> callFunc(StockData<?> stockData)
+	public List<Object> callFunc(ShareData<?> stockData)
 	{
 		FuncInfo funcInfo = coreMetaData.getFuncInfo();
 
@@ -182,7 +182,7 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 	/**
 	 * @return the lookbackQueue
 	 */
-	protected StockData<?>[] getLookbackQueue()
+	protected ShareData<?>[] getLookbackQueue()
 	{
 		return lookbackQueue;
 	}

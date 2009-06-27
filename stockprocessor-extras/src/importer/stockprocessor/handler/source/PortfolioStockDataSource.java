@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.CandleStockData;
+import stockprocessor.data.CandleShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.processor.AbstractDataProcessor;
@@ -33,7 +33,7 @@ import stockprocessor.handler.receiver.DataReceiver;
  * 
  * @author anti
  */
-public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleStockData>
+public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleShareData>
 {
 	protected String[] availableInstruments = new String[]
 		{"AAA", "ANY", "BIF", "BNPAGRI0111", "BOOK", "CSEPEL", "DANUBIUS", "ECONET", "EGIS", "EHEP", "ELMU", "EMASZ", "ETFBUXOTP", "EXTERNET",
@@ -71,9 +71,9 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	 * .lang.String[])
 	 */
 	@Override
-	protected CandleStockData processLine(String[] nextLine)
+	protected CandleShareData processLine(String[] nextLine)
 	{
-		CandleStockData stockData = null;
+		CandleShareData stockData = null;
 
 		if (counter == 0)
 		{
@@ -101,7 +101,7 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 
 				long volume = Long.parseLong(nextLine[5]);
 
-				stockData = new CandleStockData(candle, date, periode, volume);
+				stockData = new CandleShareData(instrument, candle, periode, volume, date);
 			}
 			catch (ParseException e)
 			{
@@ -280,7 +280,7 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	 * .anti.stock.processor.StockDataProcessor, java.io.Reader, char)
 	 */
 	@Override
-	protected void readFile(DataReceiver<CandleStockData> dataReceiver, String input, Reader reader, char separator) throws IOException
+	protected void readFile(DataReceiver<CandleShareData> dataReceiver, String input, Reader reader, char separator) throws IOException
 	{
 		counter = 0;
 

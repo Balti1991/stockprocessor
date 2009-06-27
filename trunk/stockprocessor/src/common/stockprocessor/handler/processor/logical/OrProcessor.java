@@ -60,12 +60,12 @@ public class OrProcessor extends LogicalProcessor
 	 * .lang.String, java.lang.Object)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, Boolean inputData)
+	public void newDataArrivedNotification(String input, Boolean inputData)
 	{
 		if (inputData == null)
 			return;
 
 		// TODO
-		publishNewData(instrument, !inputData);
+		publishNewData(input, !inputData);
 	}
 }

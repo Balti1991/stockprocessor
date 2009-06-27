@@ -304,7 +304,7 @@ public class AddElementWindow extends JDialog
 			// register element on processor
 			@SuppressWarnings("unchecked")
 			DataReceiver dataReceiver = (DataReceiver) element;
-			stockDataProcessor.registerDataReceiver(null, dataReceiver);
+			stockDataProcessor.registerDataReceiver(null, dataReceiver, "ChartInput");
 
 			// register element
 			element.setPlot(chart.getPlot());
@@ -319,19 +319,19 @@ public class AddElementWindow extends JDialog
 		brokerElement.setPlot(chart.getPlot());
 		// stockDataProcessor.registerDataReceiver(null, (DataReceiver)
 		// brokerElement);
-		// FIXME block start
+		// FIXME block end
 
 		// register on sources
-		Map<String, Object> inputParameters = sourcePanel.getParameters();
-		for (Entry<String, Object> inputParameter : inputParameters.entrySet())
+		Map<String, Pair<String, String>> inputParameters = sourcePanel.getParameters();
+		for (Entry<String, Pair<String, String>> inputParameter : inputParameters.entrySet())
 		{
 			@SuppressWarnings("unchecked")
-			Pair<String, String> pair = (Pair<String, String>) inputParameter.getValue();
+			Pair<String, String> pair = inputParameter.getValue();
 
 			// register the processor
 			@SuppressWarnings("unchecked")
 			DataSource stockDataSource = sourceManager.getInstance(pair.getFirst());
-			stockDataSource.registerDataReceiver(pair.getSecond(), stockDataProcessor);
+			stockDataSource.registerDataReceiver(pair.getSecond(), stockDataProcessor, inputParameter.getKey());
 		}
 	}
 }

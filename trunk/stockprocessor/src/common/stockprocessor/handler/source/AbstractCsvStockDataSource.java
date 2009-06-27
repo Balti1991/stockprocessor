@@ -48,7 +48,7 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 	/**
 	 * @throws IOException
 	 */
-	protected void readFile(DataReceiver<SD> dataReceiver, Reader reader, char separator) throws IOException
+	protected void readFile(DataReceiver<SD> dataReceiver, String input, Reader reader, char separator) throws IOException
 	{
 		// prepare
 		Reader bufferedReader = new BufferedReader(reader);
@@ -70,7 +70,7 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 				{
 					try
 					{
-						dataReceiver.newDataArrivedNotification(instrument, stockData);
+						dataReceiver.newDataArrivedNotification(input, stockData);
 					}
 					catch (RuntimeException e)
 					{
@@ -133,14 +133,14 @@ public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extend
 	 * (java.lang.String, hu.bogar.anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<SD> dataReceiver)
+	public void registerDataReceiver(String instrument, DataReceiver<SD> dataReceiver, String input)
 	{
 		Reader reader = null;
 		try
 		{
 			// read the csv file only once per processor
 			reader = getReader(instrument);
-			readFile(dataReceiver, reader, getSeparator());
+			readFile(dataReceiver, input, reader, getSeparator());
 		}
 		catch (FileNotFoundException e)
 		{

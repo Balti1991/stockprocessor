@@ -154,7 +154,7 @@ public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<Sto
 	 * setOptionalInputParameterInformations(java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		Object object = optionalParameters.get(CANDLE_WIDTH_PARAMETER_NAME);
 		if (object != null)

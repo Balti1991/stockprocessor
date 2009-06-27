@@ -3,13 +3,13 @@
  */
 package stockprocessor.broker;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.handler.StockAction;
 
 /**
  * @author anti
  */
-public abstract class AbstractPercentageBroker<SD extends StockData<?>> extends AbstractStockBroker<SD>
+public abstract class AbstractPercentageBroker<SD extends ShareData<?>> extends AbstractStockBroker<SD>
 {
 	// upper margin
 	private final double upper;

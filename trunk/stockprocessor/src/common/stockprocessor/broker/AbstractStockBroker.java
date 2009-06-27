@@ -4,13 +4,13 @@
 package stockprocessor.broker;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.handler.StockAction;
 
 /**
  * @author anti
  */
-public abstract class AbstractStockBroker<SD extends StockData<?>> implements StockBroker<SD>
+public abstract class AbstractStockBroker<SD extends ShareData<?>> implements StockBroker<SD>
 {
 	private StockBrokerHouse stockBrokerHouse = null;
 

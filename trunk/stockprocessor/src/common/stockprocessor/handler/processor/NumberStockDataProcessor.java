@@ -11,14 +11,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 
 /**
  * @author anti
  */
-public class NumberStockDataProcessor extends AbstractDataProcessor<StockData<?>, StockData<Number>>
+public class NumberStockDataProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<Number>>
 {
 	private static final String OUTPUT_INSTRUMENT = "NumberData";
 
@@ -60,7 +60,7 @@ public class NumberStockDataProcessor extends AbstractDataProcessor<StockData<?>
 	 * (hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, StockData<?> stockData)
+	public void newDataArrivedNotification(String instrument, ShareData<?> stockData)
 	{
 		log.debug("Received data [" + stockData + "] from [" + getName() + "]");
 
@@ -68,12 +68,13 @@ public class NumberStockDataProcessor extends AbstractDataProcessor<StockData<?>
 		if (value instanceof Integer)
 		{
 			Integer intValue = (Integer) value;
-			publishNewData(OUTPUT_INSTRUMENT, new StockData<Number>(stockData.getTime(), intValue, stockData.getVolume()));
+			publishNewData(OUTPUT_INSTRUMENT, new ShareData<Number>(instrument, intValue, stockData.getVolume(), stockData.getTimeStamp()));
 		}
 		else if (value instanceof Candle)
 		{
 			Candle candleValue = (Candle) value;
-			publishNewData(OUTPUT_INSTRUMENT, new StockData<Number>(stockData.getTime(), candleValue.getClose(), stockData.getVolume()));
+			publishNewData(OUTPUT_INSTRUMENT, new ShareData<Number>(instrument, candleValue.getClose(), stockData.getVolume(), stockData
+					.getTimeStamp()));
 		}
 
 	}

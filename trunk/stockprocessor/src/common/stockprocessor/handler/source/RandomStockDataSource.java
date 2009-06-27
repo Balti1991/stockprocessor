@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.processor.AbstractDataProcessor;
@@ -17,7 +17,7 @@ import stockprocessor.handler.processor.AbstractDataProcessor;
 /**
  * @author anti
  */
-public class RandomStockDataSource extends AbstractDataSource<StockData<Integer>>
+public class RandomStockDataSource extends AbstractDataSource<ShareData<Integer>>
 {
 	public static final String INSTRUMENT = "RND";
 
@@ -45,7 +45,7 @@ public class RandomStockDataSource extends AbstractDataSource<StockData<Integer>
 		};
 	}
 
-	protected StockData<Integer> generateStockData()
+	protected ShareData<Integer> generateStockData()
 	{
 		// set time
 		baseDate = DateUtils.addSeconds(baseDate, dateStep);
@@ -57,7 +57,7 @@ public class RandomStockDataSource extends AbstractDataSource<StockData<Integer>
 		// System.out.println(lastValue + " + " + delta + " [" + random + "/" +
 		// (random - 0.5) + "]");
 
-		return new StockData<Integer>(baseDate, lastValue, (long) (100 * Math.random()));
+		return new ShareData<Integer>(INSTRUMENT, lastValue, (long) (100 * Math.random()), baseDate);
 	}
 
 	/*

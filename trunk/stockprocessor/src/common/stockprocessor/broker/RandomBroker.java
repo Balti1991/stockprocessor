@@ -3,13 +3,13 @@
  */
 package stockprocessor.broker;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.handler.StockAction;
 
 /**
  * @author anti
  */
-public class RandomBroker extends AbstractStockBroker<StockData<?>>
+public class RandomBroker extends AbstractStockBroker<ShareData<?>>
 {
 	/*
 	 * (non-Javadoc)
@@ -28,7 +28,7 @@ public class RandomBroker extends AbstractStockBroker<StockData<?>>
 	 * .data.StockData)
 	 */
 	@Override
-	protected StockAction calculateAction(StockData<?> stockData)
+	protected StockAction calculateAction(ShareData<?> stockData)
 	{
 		double random = Math.random();
 
@@ -51,7 +51,7 @@ public class RandomBroker extends AbstractStockBroker<StockData<?>>
 	 * .data.StockData, stockprocessor.processor.StockAction, int)
 	 */
 	@Override
-	protected int calculateAmount(StockData<?> stockData, StockAction action, int ownedAmount)
+	protected int calculateAmount(ShareData<?> stockData, StockAction action, int ownedAmount)
 	{
 		switch (action)
 		{

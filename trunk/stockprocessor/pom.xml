@@ -2,8 +2,28 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>stockprocessor</groupId>
 	<artifactId>stockprocessor</artifactId>
+	<name>StockProcessor</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>StockProcessor base</description>
+	<url>http://code.google.com/p/stockprocessor/</url>
+	<issueManagement>
+		<system>Google</system>
+		<url>http://code.google.com/p/stockprocessor/issues/list</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<id>anti</id>
+			<name>Kocsis Antal</name>
+			<timezone>GMT+1</timezone>
+			<roles>
+			</roles>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/stockprocessor-read-only</connection>
+		<tag>HEAD</tag>
+		<url>http://code.google.com/p/stockprocessor/source/browse/</url>
+	</scm>
 	<repositories>
 		<repository>
 			<id>JBOSS</id>

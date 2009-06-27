@@ -84,7 +84,7 @@ public class NumberStockDataProcessor extends AbstractDataProcessor<StockData<?>
 	 * setOptionalInputParameterInformations(java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// NOP
 	}

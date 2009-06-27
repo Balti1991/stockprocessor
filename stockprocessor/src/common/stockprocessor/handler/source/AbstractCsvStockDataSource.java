@@ -13,7 +13,7 @@ import java.io.Reader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.handler.receiver.DataReceiver;
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -24,7 +24,7 @@ import au.com.bytecode.opencsv.CSVReader;
 /**
  * @author anti
  */
-public abstract class AbstractCsvStockDataSource<SD extends StockData<?>> extends AbstractDataSource<SD>
+public abstract class AbstractCsvStockDataSource<SD extends ShareData<?>> extends AbstractDataSource<SD>
 {
 	private static final Log log = LogFactory.getLog(AbstractCsvStockDataSource.class);
 

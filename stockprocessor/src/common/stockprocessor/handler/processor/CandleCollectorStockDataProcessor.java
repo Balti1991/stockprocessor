@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.Candle;
-import stockprocessor.data.CandleStockData;
-import stockprocessor.data.StockData;
+import stockprocessor.data.CandleShareData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.DefaultRangeParameterInformation;
 import stockprocessor.data.information.NumberParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
@@ -22,7 +22,7 @@ import stockprocessor.data.information.ParameterInformation.ParameterType;
 /**
  * @author anti
  */
-public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<StockData<?>, CandleStockData>
+public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<ShareData<?>, CandleShareData>
 {
 	/**
 	 * 
@@ -86,15 +86,15 @@ public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<Sto
 	 * (hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, StockData<?> stockData)
+	public void newDataArrivedNotification(String instrument, ShareData<?> stockData)
 	{
 		log.debug("Received data [" + stockData + "] from [" + getName() + "]");
 
 		// not first and outside of the candle interval
-		if (startDate != null && startDate.getTime() + getCandleWidthInMilis() < stockData.getTime().getTime())
+		if (startDate != null && startDate.getTime() + getCandleWidthInMilis() < stockData.getTimeStamp().getTime())
 		{
 			// create previous candle & send
-			CandleStockData candleStockData = new CandleStockData(candle, startDate, getCandleWidthInMilis(), volume);
+			CandleShareData candleStockData = new CandleShareData(instrument, candle, getCandleWidthInMilis(), volume, startDate);
 			publishNewData(OUTPUT_INSTRUMENT, candleStockData);
 			log.debug("Sent " + instrument + " data [" + candleStockData + "]");
 
@@ -121,7 +121,7 @@ public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<Sto
 			}
 
 			// create first time
-			startDate = new Date(((stockData.getTime().getTime() / getCandleWidthInMilis())) * getCandleWidthInMilis());
+			startDate = new Date(((stockData.getTimeStamp().getTime() / getCandleWidthInMilis())) * getCandleWidthInMilis());
 		}
 		else
 		{

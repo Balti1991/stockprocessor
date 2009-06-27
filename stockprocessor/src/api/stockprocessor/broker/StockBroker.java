@@ -3,13 +3,13 @@
  */
 package stockprocessor.broker;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.handler.StockAction;
 
 /**
  * @author anti
  */
-public interface StockBroker<SD extends StockData<?>>
+public interface StockBroker<SD extends ShareData<?>>
 {
 	public String getName();
 

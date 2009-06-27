@@ -19,12 +19,12 @@ import javax.swing.text.html.HTMLEditorKit.Parser;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 import javax.swing.text.html.parser.ParserDelegator;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 
 /**
  * @author anti
  */
-public abstract class AbstractHtmlStockDataSource<SD extends StockData<?>> extends AbstractDataSource<SD>
+public abstract class AbstractHtmlStockDataSource<SD extends ShareData<?>> extends AbstractDataSource<SD>
 {
 	public void parse() throws IOException
 	{

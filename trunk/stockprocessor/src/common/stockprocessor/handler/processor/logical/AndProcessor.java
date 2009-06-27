@@ -3,16 +3,11 @@
  */
 package stockprocessor.handler.processor.logical;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.data.information.ParameterInformation.ParameterType;
 
 /**
  * @author anti
  */
-public class AndProcessor extends LogicalProcessor
+public class AndProcessor extends TwoInputLogicalProcessor
 {
 	/*
 	 * (non-Javadoc)
@@ -37,35 +32,12 @@ public class AndProcessor extends LogicalProcessor
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * stockprocessor.processor.AbstractDataProcessor#createInputParameters()
+	 * stockprocessor.handler.processor.logical.TwoInputLogicalProcessor#calculate
+	 * (java.lang.String, java.lang.Boolean, java.lang.Boolean)
 	 */
 	@Override
-	protected List<ParameterInformation> createInputParameters()
+	protected Boolean calculate(String input, Boolean inputDataA, Boolean inputDataB)
 	{
-		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
-
-		// logical output
-		ParameterInformation logicalParameterInformation1 = createParameterInformation("Source 1", ParameterType.LOGICAL);
-		list.add(logicalParameterInformation1);
-		ParameterInformation logicalParameterInformation2 = createParameterInformation("Source 2", ParameterType.LOGICAL);
-		list.add(logicalParameterInformation2);
-
-		return list;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * stockprocessor.processor.DataReceiver#newDataArrivedNotification(java
-	 * .lang.String, java.lang.Object)
-	 */
-	@Override
-	public void newDataArrivedNotification(String input, Boolean inputData)
-	{
-		if (inputData == null)
-			return;
-
-		// TODO
-		publishNewData(input, !inputData);
+		return inputDataA && inputDataB;
 	}
 }

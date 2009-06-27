@@ -55,4 +55,31 @@ public abstract class LogicalProcessor extends AbstractDataProcessor<Boolean, Bo
 	{
 		// NOP
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.receiver.DataReceiver#newDataArrivedNotification
+	 * (java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public synchronized void newDataArrivedNotification(String input, Boolean inputData)
+	{
+		// skip empty
+		if (inputData == null)
+			return;
+
+		// calculate from new data
+		Boolean result = calculate(input, inputData);
+
+		// publish result
+		publishNewData(getName(), result);
+	}
+
+	/**
+	 * @param input
+	 * @param inputData
+	 * @return
+	 */
+	protected abstract Boolean calculate(String input, Boolean inputData);
 }

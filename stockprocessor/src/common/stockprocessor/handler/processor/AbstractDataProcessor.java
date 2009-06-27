@@ -74,7 +74,7 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 		}
 
 		@Override
-		public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+		public void setOptionalParameters(Map<String, Object> optionalParameters)
 		{
 			// NOP
 		}
@@ -104,9 +104,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * stockprocessor.data.handler.DataReceiver#getInputParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getInputParameterInformations()
+	public List<ParameterInformation> getInputParameters()
 	{
-		return dataReceiver.getInputParameterInformations();
+		return dataReceiver.getInputParameters();
 	}
 
 	/*
@@ -116,9 +116,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * ()
 	 */
 	@Override
-	public List<ParameterInformation> getOptionalParameterInformations()
+	public List<ParameterInformation> getOptionalParameters()
 	{
-		return dataReceiver.getOptionalParameterInformations();
+		return dataReceiver.getOptionalParameters();
 	}
 
 	/*
@@ -127,9 +127,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * stockprocessor.data.handler.DataSource#getOutputParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getOutputParameterInformations()
+	public List<ParameterInformation> getOutputParameters()
 	{
-		return dataSource.getOutputParameterInformations();
+		return dataSource.getOutputParameters();
 	}
 
 	/*
@@ -139,9 +139,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * .String, stockprocessor.data.handler.DataReceiver)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver)
+	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input)
 	{
-		dataSource.registerDataReceiver(instrument, dataReceiver);
+		dataSource.registerDataReceiver(instrument, dataReceiver, input);
 	}
 
 	/*

@@ -20,10 +20,31 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/stockprocessor-read-only</connection>
+		<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/</connection>
 		<tag>HEAD</tag>
 		<url>http://code.google.com/p/stockprocessor/source/browse/</url>
 	</scm>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<executions>
+					<execution>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changelog-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>changelog</id>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<repositories>
 		<repository>
 			<id>JBOSS</id>

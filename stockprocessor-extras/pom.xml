@@ -18,7 +18,7 @@
   	</developer>
   </developers>
   <scm>
-  	<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/stockprocessor-read-only</connection>
+  	<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/</connection>
   	<tag>HEAD</tag>
   	<url>http://code.google.com/p/stockprocessor/source/browse/</url>
   </scm>

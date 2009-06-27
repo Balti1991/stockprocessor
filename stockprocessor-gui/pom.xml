@@ -18,12 +18,18 @@
   	</developer>
   </developers>
   <scm>
-  	<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/stockprocessor-read-only</connection>
+  	<connection>scm:svn:http://stockprocessor.googlecode.com/svn/trunk/</connection>
   	<tag>HEAD</tag>
   	<url>http://code.google.com/p/stockprocessor/source/browse/</url>
   </scm>
   <build>
   	<sourceDirectory>/src/gui</sourceDirectory>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-scm-plugin</artifactId>
+  		</plugin>
+  	</plugins>
   </build>
   <dependencies>
   	<dependency>

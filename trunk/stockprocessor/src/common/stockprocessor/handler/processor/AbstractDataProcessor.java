@@ -17,7 +17,7 @@ import stockprocessor.handler.source.AbstractDataSource;
  */
 public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 {
-	private abstract class ProcessorDataSource extends AbstractDataSource<O>
+	protected abstract class ProcessorDataSource extends AbstractDataSource<O>
 	{
 		/*
 		 * (non-Javadoc)
@@ -32,71 +32,74 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 		}
 	}
 
-	protected ProcessorDataSource dataSource = new ProcessorDataSource()
+	protected ProcessorDataSource dataSource;
+
+	protected DataReceiver<I> dataReceiver;
+
+	/**
+	 * 
+	 */
+	public AbstractDataProcessor()
 	{
-		@Override
-		protected List<ParameterInformation> createOutputParameters()
-		{
-			return AbstractDataProcessor.this.createOutputParameters();
-		}
+		dataSource = getProcessorDataSource();
+		dataReceiver = getDataReceiver();
+	}
 
-		@Override
-		public String getDescription()
-		{
-			return AbstractDataProcessor.this.getDescription();
-		}
-
-		@Override
-		public String getName()
-		{
-			return AbstractDataProcessor.this.getName();
-		}
-	};
-
-	protected AbstractDataReceiver<I> dataReceiver = new AbstractDataReceiver<I>()
+	protected DataReceiver<I> getDataReceiver()
 	{
-		@Override
-		protected List<ParameterInformation> createInputParameters()
+		return new AbstractDataReceiver<I>()
 		{
-			return AbstractDataProcessor.this.createInputParameters();
-		}
+			@Override
+			protected List<ParameterInformation> createInputParameters()
+			{
+				return AbstractDataProcessor.this.createInputParameters();
+			}
 
-		@Override
-		protected List<ParameterInformation> createOptionalParameters()
-		{
-			return AbstractDataProcessor.this.createOptionalParameters();
-		}
+			@Override
+			protected List<ParameterInformation> createOptionalParameters()
+			{
+				return AbstractDataProcessor.this.createOptionalParameters();
+			}
 
-		@Override
-		public void newDataArrivedNotification(String instrument, I inputData)
-		{
-			AbstractDataProcessor.this.newDataArrivedNotification(instrument, inputData);
-		}
+			@Override
+			public void newDataArrivedNotification(String instrument, I inputData)
+			{
+				AbstractDataProcessor.this.newDataArrivedNotification(instrument, inputData);
+			}
 
-		@Override
-		public void setOptionalParameters(Map<String, Object> optionalParameters)
-		{
-			// NOP
-		}
+			@Override
+			public void setOptionalParameters(Map<String, Object> optionalParameters)
+			{
+				// NOP
+			}
 
-		@Override
-		public String getDescription()
-		{
-			return AbstractDataProcessor.this.getDescription();
-		}
+			@Override
+			public String getDescription()
+			{
+				return AbstractDataProcessor.this.getDescription();
+			}
 
-		@Override
-		public String getName()
-		{
-			return AbstractDataProcessor.this.getName();
-		}
-	};
+			@Override
+			public String getName()
+			{
+				return AbstractDataProcessor.this.getName();
+			}
+		};
+	}
 
+	/**
+	 * @return
+	 */
 	protected abstract List<ParameterInformation> createInputParameters();
 
+	/**
+	 * @return
+	 */
 	protected abstract List<ParameterInformation> createOptionalParameters();
 
-	protected abstract List<ParameterInformation> createOutputParameters();
+	// -------------------------------------------------
+	// Data Receiver methods
+	// -------------------------------------------------
 
 	/*
 	 * (non-Javadoc)
@@ -120,6 +123,39 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	{
 		return dataReceiver.getOptionalParameters();
 	}
+
+	// -------------------------------------------------
+	// Data Source methods
+	// -------------------------------------------------
+
+	protected ProcessorDataSource getProcessorDataSource()
+	{
+		return new ProcessorDataSource()
+		{
+			@Override
+			protected List<ParameterInformation> createOutputParameters()
+			{
+				return AbstractDataProcessor.this.createOutputParameters();
+			}
+
+			@Override
+			public String getDescription()
+			{
+				return AbstractDataProcessor.this.getDescription();
+			}
+
+			@Override
+			public String getName()
+			{
+				return AbstractDataProcessor.this.getName();
+			}
+		};
+	}
+
+	/**
+	 * @return
+	 */
+	protected abstract List<ParameterInformation> createOutputParameters();
 
 	/*
 	 * (non-Javadoc)
@@ -161,6 +197,17 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 		dataSource.publishNewData(instrument, data);
 	}
 
+	// -------------------------------------------------
+	// own methods
+	// -------------------------------------------------
+
+	/**
+	 * creates a parameter information descriptor
+	 * 
+	 * @param name
+	 * @param parameterType
+	 * @return
+	 */
 	public static ParameterInformation createParameterInformation(final String name, final ParameterType parameterType)
 	{
 		return new ParameterInformation()

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.handler.processor;
+package stockprocessor.handler.processor.converter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,18 +18,19 @@ import stockprocessor.data.information.DefaultRangeParameterInformation;
 import stockprocessor.data.information.NumberParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.processor.AbstractDataProcessor;
 
 /**
  * @author anti
  */
-public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<ShareData<?>, CandleShareData>
+public class CandleConverter extends AbstractDataProcessor<ShareData<?>, CandleShareData>
 {
 	/**
 	 * 
 	 */
 	private static final String OUTPUT_INSTRUMENT = "CandleData";
 
-	private static final Log log = LogFactory.getLog(CandleCollectorStockDataProcessor.class);
+	private static final Log log = LogFactory.getLog(CandleConverter.class);
 
 	public static final String PROCESSOR_NAME = "Candle data";
 
@@ -55,7 +56,7 @@ public class CandleCollectorStockDataProcessor extends AbstractDataProcessor<Sha
 	/**
 	 * @param candleWidth in milliseconds
 	 */
-	public CandleCollectorStockDataProcessor()
+	public CandleConverter()
 	{
 	}
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.handler.processor;
+package stockprocessor.handler.processor.converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,22 +14,23 @@ import stockprocessor.data.Candle;
 import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.processor.AbstractDataProcessor;
 
 /**
  * @author anti
  */
-public class NumberStockDataProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<Number>>
+public class NumberConverter extends AbstractDataProcessor<ShareData<?>, ShareData<Number>>
 {
 	private static final String OUTPUT_INSTRUMENT = "NumberData";
 
-	private static final Log log = LogFactory.getLog(NumberStockDataProcessor.class);
+	private static final Log log = LogFactory.getLog(NumberConverter.class);
 
 	public static final String PROCESSOR_NAME = "Number data";
 
 	/**
 	 * @param candleWidth in milliseconds
 	 */
-	public NumberStockDataProcessor()
+	public NumberConverter()
 	{
 	}
 

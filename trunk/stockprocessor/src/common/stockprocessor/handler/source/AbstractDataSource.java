@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.receiver.DataReceiver;
+import stockprocessor.util.Pair;
 
 /**
  * @author anti
@@ -20,16 +21,16 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 
 	private List<ParameterInformation> outputParameters = null;
 
-	private final Map<String, List<DataReceiver<O>>> dataReceivers = new HashMap<String, List<DataReceiver<O>>>();
+	private final Map<String, List<Pair<DataReceiver<O>, String>>> dataReceivers = new HashMap<String, List<Pair<DataReceiver<O>, String>>>();
 
-	private final List<DataReceiver<O>> fullDataReceivers = new ArrayList<DataReceiver<O>>();
+	private final List<Pair<DataReceiver<O>, String>> fullDataReceivers = new ArrayList<Pair<DataReceiver<O>, String>>();
 
 	/*
 	 * (non-Javadoc)
 	 * @see stockprocessor.source.DataSource#getOutputParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getOutputParameterInformations()
+	public List<ParameterInformation> getOutputParameters()
 	{
 		if (outputParameters == null)
 		{
@@ -48,27 +49,28 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 * .anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver)
+	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input)
 	{
+		Pair<DataReceiver<O>, String> pair = new Pair<DataReceiver<O>, String>(dataReceiver, input);
 		if (instrument == null)
 		{
-			fullDataReceivers.add(dataReceiver);
+			fullDataReceivers.add(pair);
 			return;
 		}
 
-		List<DataReceiver<O>> receivers = dataReceivers.get(instrument);
+		List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(instrument);
 
 		if (receivers == null)
 		{
-			receivers = new ArrayList<DataReceiver<O>>();
+			receivers = new ArrayList<Pair<DataReceiver<O>, String>>();
 			dataReceivers.put(instrument, receivers);
 		}
 
 		// if not yet on list
-		if (!receivers.contains(dataReceiver))
+		if (!receivers.contains(pair))
 		{
 			// add it
-			receivers.add(dataReceiver);
+			receivers.add(pair);
 		}
 	}
 
@@ -81,6 +83,7 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	@Override
 	public void removeDataReceiver(String instrument, DataReceiver<O> dataReceiver)
 	{
+		// FIXME: remove the pair!!!
 		if (instrument == null)
 		{
 			// delete from all
@@ -93,7 +96,7 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 		else
 		{
 			// single delete
-			List<DataReceiver<O>> receivers = dataReceivers.get(instrument);
+			List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(instrument);
 			if (receivers != null)
 			{
 				// if registered
@@ -117,8 +120,10 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 		if (data == null)
 			return;
 
-		notifyReceivers(fullDataReceivers, instrument, data);
-		notifyReceivers(dataReceivers.get(instrument), instrument, data);
+		log.debug("New data on [" + instrument + "]:" + data);
+
+		notifyReceivers(fullDataReceivers, data);
+		notifyReceivers(dataReceivers.get(instrument), data);
 	}
 
 	/**
@@ -126,22 +131,20 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 * @param instrument
 	 * @param data
 	 */
-	private void notifyReceivers(List<DataReceiver<O>> receivers, String instrument, O data)
+	private void notifyReceivers(List<Pair<DataReceiver<O>, String>> receivers, O data)
 	{
 		if (receivers != null)
 		{
-			log.debug("New data for [" + instrument + "]:" + data);
-
-			for (DataReceiver<O> stockDataReceiver : receivers)
+			for (Pair<DataReceiver<O>, String> pair : receivers)
 			{
 				try
 				{
-					stockDataReceiver.newDataArrivedNotification(instrument, data);
-					log.debug("Notified processor: [" + stockDataReceiver + "]");
+					pair.getFirst().newDataArrivedNotification(pair.getSecond(), data);
+					log.debug("Notified processor: [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "]");
 				}
 				catch (RuntimeException e)
 				{
-					log.warn("error notifying processor [" + stockDataReceiver + "] with data [" + data + "]", e);
+					log.warn("error notifying processor [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "] with data [" + data + "]", e);
 				}
 			}
 		}

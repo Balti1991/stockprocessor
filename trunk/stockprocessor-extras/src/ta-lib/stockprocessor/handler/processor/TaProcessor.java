@@ -93,7 +93,7 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 	 * (java.lang.String, hu.bogar.anti.stock.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, StockData<?> stockData)
+	public void newDataArrivedNotification(String input, StockData<?> stockData)
 	{
 		callFunc(stockData);
 	}
@@ -387,7 +387,7 @@ public class TaProcessor extends AbstractDataProcessor<StockData<?>, StockData<?
 	 * (java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// TODO Auto-generated method stub
 

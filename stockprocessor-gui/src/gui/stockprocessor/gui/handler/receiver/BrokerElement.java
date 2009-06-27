@@ -52,13 +52,13 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 	 * (java.lang.String, stockprocessor.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, SD stockData)
+	public void newDataArrivedNotification(String input, SD stockData)
 	{
 		// if not on chart skip data
 		if (plot == null)
 			return;
 
-		StockAction stockAction = stockBroker.newDataArrivedNotification(instrument, stockData);
+		StockAction stockAction = stockBroker.newDataArrivedNotification(input, stockData);
 
 		switch (stockAction)
 		{

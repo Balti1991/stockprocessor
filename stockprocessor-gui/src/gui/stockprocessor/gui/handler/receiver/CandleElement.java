@@ -56,7 +56,7 @@ public class CandleElement extends BaseElement
 	 * (java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, StockData<?> stockData)
+	public void newDataArrivedNotification(String input, StockData<?> stockData)
 	{
 		Object value = stockData.getValue();
 

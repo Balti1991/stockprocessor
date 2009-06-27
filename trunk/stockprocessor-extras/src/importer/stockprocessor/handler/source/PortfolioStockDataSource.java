@@ -280,11 +280,11 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	 * .anti.stock.processor.StockDataProcessor, java.io.Reader, char)
 	 */
 	@Override
-	protected void readFile(DataReceiver<CandleStockData> dataReceiver, Reader reader, char separator) throws IOException
+	protected void readFile(DataReceiver<CandleStockData> dataReceiver, String input, Reader reader, char separator) throws IOException
 	{
 		counter = 0;
 
-		super.readFile(dataReceiver, reader, separator);
+		super.readFile(dataReceiver, input, reader, separator);
 	}
 
 	/*

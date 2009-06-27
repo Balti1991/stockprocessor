@@ -51,7 +51,7 @@ public abstract class LogicalProcessor extends AbstractDataProcessor<Boolean, Bo
 	 * (java.util.Map)
 	 */
 	@Override
-	public void setOptionalParameterInformations(Map<String, Object> optionalParameters)
+	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// NOP
 	}

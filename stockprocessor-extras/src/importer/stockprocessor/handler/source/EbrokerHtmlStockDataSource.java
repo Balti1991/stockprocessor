@@ -63,9 +63,9 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 	 * .lang.String, stockprocessor.processor.StockDataReceiver)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<StockData<Integer>> dataReceiver)
+	public void registerDataReceiver(String instrument, DataReceiver<StockData<Integer>> dataReceiver, String input)
 	{
-		super.registerDataReceiver(instrument, dataReceiver);
+		super.registerDataReceiver(instrument, dataReceiver, input);
 
 		// start timer
 		timerEnabled = true;

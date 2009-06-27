@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import stockprocessor.handler.processor.converter.CandleConverter;
 import stockprocessor.handler.receiver.DataReceiver;
 
 import com.tictactec.ta.lib.CoreAnnotated;
@@ -196,7 +197,7 @@ public class TAProcessorManager extends ProcessorManager
 		if (coreMetaData.getInputParameterInfo(0).type() == InputParameterType.TA_Input_Price)
 		{
 			// candle
-			CandleCollectorStockDataProcessor candleDataCollector = new CandleCollectorStockDataProcessor();
+			CandleConverter candleDataCollector = new CandleConverter();
 			candleDataCollector.registerDataReceiver("", (DataReceiver) element, ""); // FIXME
 			return candleDataCollector;
 		}

@@ -18,14 +18,14 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import org.apache.commons.lang.StringUtils;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * @author anti
  */
-public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<StockData<Integer>>
+public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<ShareData<Integer>>
 {
 	protected final static String url = "http://www.ebroker.hu/pls/ebrk/new_arfolyam_html_p.startup";
 
@@ -63,7 +63,7 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 	 * .lang.String, stockprocessor.processor.StockDataReceiver)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<StockData<Integer>> dataReceiver, String input)
+	public void registerDataReceiver(String instrument, DataReceiver<ShareData<Integer>> dataReceiver, String input)
 	{
 		super.registerDataReceiver(instrument, dataReceiver, input);
 
@@ -131,9 +131,11 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Stoc
 
 						if (!StringUtils.equals(price, "N/A"))
 						{
-							StockData<Integer> stockData = new StockData<Integer>(new Date(), Integer.parseInt(price), Long.parseLong(volume));
+							String instrument = rowData.get(0);
+							ShareData<Integer> stockData = new ShareData<Integer>(instrument, Integer.parseInt(price), Long.parseLong(volume),
+									new Date());
 
-							EbrokerHtmlStockDataSource.this.publishNewData(rowData.get(0), stockData);
+							EbrokerHtmlStockDataSource.this.publishNewData(instrument, stockData);
 
 							// System.out.println("New data for [" +
 							// rowData.get(0) + "]: " + stockData);

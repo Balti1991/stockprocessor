@@ -12,7 +12,7 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.processor.AbstractDataProcessor;
@@ -56,7 +56,7 @@ public class TimeElement extends BaseElement
 	 * (java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void newDataArrivedNotification(String input, StockData<?> stockData)
+	public void newDataArrivedNotification(String input, ShareData<?> stockData)
 	{
 		Object value = stockData.getValue();
 

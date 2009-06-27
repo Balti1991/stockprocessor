@@ -12,7 +12,7 @@ import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.XYPlot;
 
 import stockprocessor.broker.StockBroker;
-import stockprocessor.data.StockData;
+import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.StockAction;
 import stockprocessor.handler.receiver.DataReceiver;
@@ -20,7 +20,7 @@ import stockprocessor.handler.receiver.DataReceiver;
 /**
  * @author anti
  */
-public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
+public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 {
 	private Boolean longPosition = null;
 
@@ -72,7 +72,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 			else if (longPosition)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTime().getTime());
+				marker.setEndValue(stockData.getTimeStamp().getTime());
 			}
 			else
 			{
@@ -91,7 +91,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 			else if (!longPosition)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTime().getTime());
+				marker.setEndValue(stockData.getTimeStamp().getTime());
 			}
 			else
 			{
@@ -106,7 +106,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 			if (longPosition != null)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTime().getTime());
+				marker.setEndValue(stockData.getTimeStamp().getTime());
 			}
 			break;
 		}
@@ -117,7 +117,7 @@ public class BrokerElement<SD extends StockData<?>> implements DataReceiver<SD>
 	private void createMarker(SD stockData, Paint paint)
 	{
 		// create new marker
-		marker = new IntervalMarker(stockData.getTime().getTime(), stockData.getTime().getTime(), paint);
+		marker = new IntervalMarker(stockData.getTimeStamp().getTime(), stockData.getTimeStamp().getTime(), paint);
 		getPlot().addDomainMarker(marker);
 	}
 

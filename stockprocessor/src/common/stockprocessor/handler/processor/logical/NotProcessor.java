@@ -54,15 +54,12 @@ public class NotProcessor extends LogicalProcessor
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * stockprocessor.processor.DataReceiver#newDataArrivedNotification(java
-	 * .lang.String, java.lang.Object)
+	 * stockprocessor.handler.processor.logical.LogicalProcessor#calculate(java
+	 * .lang.String, java.lang.Boolean)
 	 */
 	@Override
-	public void newDataArrivedNotification(String instrument, Boolean inputData)
+	protected Boolean calculate(String input, Boolean inputData)
 	{
-		if (inputData == null)
-			return;
-
-		publishNewData(instrument, !inputData);
+		return !inputData;
 	}
 }

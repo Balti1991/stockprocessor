@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import stockprocessor.handler.processor.converter.CandleConverter;
+import stockprocessor.handler.processor.converter.NumberConverter;
+
 /**
  * @author anti
  */
@@ -18,8 +21,8 @@ public class DefaultProcessorManager extends ProcessorManager
 	public DefaultProcessorManager()
 	{
 		processorList = new ArrayList<String>();
-		processorList.add(CandleCollectorStockDataProcessor.PROCESSOR_NAME);
-		processorList.add(NumberStockDataProcessor.PROCESSOR_NAME);
+		processorList.add(CandleConverter.PROCESSOR_NAME);
+		processorList.add(NumberConverter.PROCESSOR_NAME);
 	}
 
 	/*
@@ -31,10 +34,10 @@ public class DefaultProcessorManager extends ProcessorManager
 	@Override
 	public DataProcessor<?, ?> getInstance(String stockDataProcessorName)
 	{
-		if (StringUtils.equals(CandleCollectorStockDataProcessor.PROCESSOR_NAME, stockDataProcessorName))
-			return new CandleCollectorStockDataProcessor();
-		else if (StringUtils.equals(NumberStockDataProcessor.PROCESSOR_NAME, stockDataProcessorName))
-			return new NumberStockDataProcessor();
+		if (StringUtils.equals(CandleConverter.PROCESSOR_NAME, stockDataProcessorName))
+			return new CandleConverter();
+		else if (StringUtils.equals(NumberConverter.PROCESSOR_NAME, stockDataProcessorName))
+			return new NumberConverter();
 		else
 			return null;
 	}

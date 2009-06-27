@@ -23,7 +23,7 @@ public abstract class AbstractDataReceiver<I> implements DataReceiver<I>
 	 * stockprocessor.processor.DataProcessor#getInputParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getInputParameterInformations()
+	public List<ParameterInformation> getInputParameters()
 	{
 		if (inputParameters == null)
 		{
@@ -41,7 +41,7 @@ public abstract class AbstractDataReceiver<I> implements DataReceiver<I>
 	 * stockprocessor.processor.DataProcessor#getOptionalParameterInformations()
 	 */
 	@Override
-	public List<ParameterInformation> getOptionalParameterInformations()
+	public List<ParameterInformation> getOptionalParameters()
 	{
 		if (optParameters == null)
 		{

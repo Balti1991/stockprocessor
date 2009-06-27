@@ -164,10 +164,15 @@ public class DataSourcePanel extends JPanel
 		}
 	}
 
-	public Map<String, Object> getParameters()
+	/**
+	 * the map of selected parameters, with value pairs of source/instrument
+	 * 
+	 * @return
+	 */
+	public Map<String, Pair<String, String>> getParameters()
 	{
 		// create the collector map
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Pair<String, String>> parameters = new HashMap<String, Pair<String, String>>();
 
 		for (Iterator<ParameterInformation> parameterIterater = parameterInformations.iterator(); parameterIterater.hasNext();)
 		{

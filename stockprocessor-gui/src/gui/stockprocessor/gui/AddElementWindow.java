@@ -289,7 +289,7 @@ public class AddElementWindow extends JDialog
 			// case STOCK_ACTION:
 			// element = new BrokerElement<StockData<?>>(); TODO
 			// break;
-			case STOCK_DATA_INTEGER:
+			case STOCK_DATA_NUMBER:
 				element = new TimeElement(name);
 				break;
 			case STOCK_DATA_CANDLE:

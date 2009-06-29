@@ -1,5 +1,5 @@
   * [main Start Page]
   * [StockProcessor StockProcessor]
     * [DataHandler DataHandler classes]
-  * [ChangLog Change-log]
+  * [ChangeLog Change-log]
   * [RoadMap Road Map]

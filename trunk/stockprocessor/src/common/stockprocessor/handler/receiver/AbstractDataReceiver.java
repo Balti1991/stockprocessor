@@ -6,7 +6,6 @@ package stockprocessor.handler.receiver;
 import java.util.List;
 
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * @author anti

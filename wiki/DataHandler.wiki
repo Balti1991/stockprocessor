@@ -1,5 +1,6 @@
 #summary StockData handlers like receiver, source, processor
 #labels todo
+#sidebar SideNavigation
 
 = DataHandler =
 

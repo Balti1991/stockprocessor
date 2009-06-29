@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.receiver.AbstractDataReceiver;
 import stockprocessor.handler.receiver.DataReceiver;
 import stockprocessor.handler.source.AbstractDataSource;
@@ -195,34 +194,5 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	protected void publishNewData(String instrument, O data)
 	{
 		dataSource.publishNewData(instrument, data);
-	}
-
-	// -------------------------------------------------
-	// own methods
-	// -------------------------------------------------
-
-	/**
-	 * creates a parameter information descriptor
-	 * 
-	 * @param name
-	 * @param parameterType
-	 * @return
-	 */
-	public static ParameterInformation createParameterInformation(final String name, final ParameterType parameterType)
-	{
-		return new ParameterInformation()
-		{
-			@Override
-			public String getDisplayName()
-			{
-				return name;
-			}
-
-			@Override
-			public ParameterType getType()
-			{
-				return parameterType;
-			}
-		};
 	}
 }

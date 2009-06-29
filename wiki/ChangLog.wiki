@@ -1,4 +1,5 @@
 #summary Short log of changes in the program
+#sidebar SideNavigation
 
 =2009.06.29.=
   * Ta-lib fixed, again works

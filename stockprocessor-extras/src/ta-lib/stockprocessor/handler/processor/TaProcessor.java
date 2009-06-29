@@ -141,9 +141,9 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 				// if got result
 				if (result != null)
 					// split & publish
-					for (int j = 0; j < funcInfo.nbOptInput(); j++)
+					for (int j = 0; j < funcInfo.nbOutput(); j++)
 					{
-						OutputParameterInfo opinfo = getCoreMetaData().getOutputParameterInfo(i);
+						OutputParameterInfo opinfo = getCoreMetaData().getOutputParameterInfo(j);
 
 						// TODO: calculate sum volume
 						ShareData<?> data;
@@ -589,7 +589,7 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 			if (optionalParameters.containsKey(displayName))
 			{
 				// override the default value
-				Double value = (Double) optionalParameters.get(displayName);
+				Object value = optionalParameters.get(displayName);
 
 				log.debug("Useing new value: [" + value + "] to parameter: [" + info + "]");
 
@@ -599,10 +599,10 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 					optInputParameters.set(i, new String("" + value));
 					break;
 				case TA_OptInput_IntegerRange:
-					optInputParameters.set(i, value.intValue());
+					optInputParameters.set(i, ((Double) value).intValue());
 					break;
 				case TA_OptInput_RealList:
-					optInputParameters.set(i, "" + value);
+					optInputParameters.set(i, new String("" + value));
 					break;
 				case TA_OptInput_RealRange:
 					optInputParameters.set(i, value);

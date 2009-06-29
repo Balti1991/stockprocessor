@@ -6,7 +6,7 @@ package stockprocessor.data.information;
 /**
  * @author anti
  */
-public class DefaultRangeParameterInformation<V extends Number> extends DefaultParamterInformation<V> implements RangeParameterInformation<V>
+public class DefaultRangeParameterInformation<V extends Number> extends DefaultNumberParamterInformation<V> implements RangeParameterInformation<V>
 {
 	private final V end;
 
@@ -26,22 +26,12 @@ public class DefaultRangeParameterInformation<V extends Number> extends DefaultP
 	 */
 	public DefaultRangeParameterInformation(String displayName, V defaultValue, V start, V end, V increment, V precision)
 	{
-		super(displayName, defaultValue);
+		super(displayName, ParameterType.RANGE, defaultValue);
 
 		this.end = end;
 		this.increment = increment;
 		this.precision = precision;
 		this.start = start;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.data.information.ParameterInformation#type()
-	 */
-	@Override
-	public ParameterType getType()
-	{
-		return ParameterType.RANGE;
 	}
 
 	/*

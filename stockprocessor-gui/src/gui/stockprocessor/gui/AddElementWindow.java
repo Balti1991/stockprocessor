@@ -290,10 +290,10 @@ public class AddElementWindow extends JDialog
 			// element = new BrokerElement<StockData<?>>(); TODO
 			// break;
 			case STOCK_DATA_NUMBER:
-				element = new TimeElement(name);
+				element = new TimeElement(name + "(" + outputParameterInformation.getDisplayName() + ")");
 				break;
 			case STOCK_DATA_CANDLE:
-				element = new CandleElement(name);
+				element = new CandleElement(name + "(" + outputParameterInformation.getDisplayName() + ")");
 				break;
 
 			default:
@@ -304,7 +304,7 @@ public class AddElementWindow extends JDialog
 			// register element on processor
 			@SuppressWarnings("unchecked")
 			DataReceiver dataReceiver = (DataReceiver) element;
-			stockDataProcessor.registerDataReceiver(null, dataReceiver, "ChartInput");
+			stockDataProcessor.registerDataReceiver(outputParameterInformation.getDisplayName(), dataReceiver, "ChartInput");
 
 			// register element
 			element.setPlot(chart.getPlot());

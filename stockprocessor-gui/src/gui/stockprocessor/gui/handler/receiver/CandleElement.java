@@ -87,7 +87,8 @@ public class CandleElement extends BaseElement
 	@Override
 	public void setPlot(XYPlot plot)
 	{
-		plot.setRenderer(new CandlestickRenderer());
-		plot.setDataset(datasetOHLC);
+		int index = getFreeRendererPosition(plot);
+		plot.setRenderer(index, new CandlestickRenderer());
+		plot.setDataset(index, datasetOHLC);
 	}
 }

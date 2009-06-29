@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.Second;
 
@@ -79,5 +80,17 @@ public abstract class BaseElement extends AbstractDataReceiver<ShareData<?>> imp
 	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
 		// NOP
+	}
+
+	protected int getFreeRendererPosition(XYPlot plot)
+	{
+		for (int i = 0; i < 255; i++)
+		{
+			if (plot.getRenderer(i) == null)
+				return i;
+		}
+
+		// TODO message
+		throw new RuntimeException("No more free renderer position on chart");
 	}
 }

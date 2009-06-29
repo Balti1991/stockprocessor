@@ -85,7 +85,8 @@ public class TimeElement extends BaseElement
 	@Override
 	public void setPlot(XYPlot plot)
 	{
-		plot.setRenderer(new XYLineAndShapeRenderer(true, false));
-		plot.setDataset(datasetTime);
+		int index = getFreeRendererPosition(plot);
+		plot.setRenderer(index, new XYLineAndShapeRenderer(true, false));
+		plot.setDataset(index, datasetTime);
 	}
 }

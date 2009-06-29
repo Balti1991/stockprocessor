@@ -1,5 +1,10 @@
 #summary Short log of changes in the program
 
+=2009.06.29.=
+  * Ta-lib fixed, again works
+  * some GUI fixes
+  * TwoInputLogicalProcessor for logical processors with two parameters
+  * StockData -> ShareData rename
 =2009.06.25.=
   * handler change finished
 =2009.06.23.=

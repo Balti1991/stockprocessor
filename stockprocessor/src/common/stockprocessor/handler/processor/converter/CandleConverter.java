@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import stockprocessor.data.Candle;
 import stockprocessor.data.CandleShareData;
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.DefaultRangeParameterInformation;
 import stockprocessor.data.information.NumberParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
@@ -173,7 +174,7 @@ public class CandleConverter extends AbstractDataProcessor<ShareData<?>, CandleS
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation("Input", ParameterType.STOCK_DATA);
+		ParameterInformation parameterInformation = new DefaultParameterInformation("Input", ParameterType.STOCK_DATA);
 		list.add(parameterInformation);
 
 		return list;
@@ -206,7 +207,7 @@ public class CandleConverter extends AbstractDataProcessor<ShareData<?>, CandleS
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation(OUTPUT_INSTRUMENT, ParameterType.STOCK_DATA_CANDLE);
+		ParameterInformation parameterInformation = new DefaultParameterInformation(OUTPUT_INSTRUMENT, ParameterType.STOCK_DATA_CANDLE);
 		list.add(parameterInformation);
 
 		return list;

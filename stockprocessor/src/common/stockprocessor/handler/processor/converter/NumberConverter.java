@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.processor.AbstractDataProcessor;
@@ -100,7 +101,7 @@ public class NumberConverter extends AbstractDataProcessor<ShareData<?>, ShareDa
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation("Input", ParameterType.STOCK_DATA);
+		ParameterInformation parameterInformation = new DefaultParameterInformation("Input", ParameterType.STOCK_DATA);
 		list.add(parameterInformation);
 
 		return list;
@@ -129,7 +130,7 @@ public class NumberConverter extends AbstractDataProcessor<ShareData<?>, ShareDa
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation(OUTPUT_INSTRUMENT, ParameterType.STOCK_DATA_INTEGER);
+		ParameterInformation parameterInformation = new DefaultParameterInformation(OUTPUT_INSTRUMENT, ParameterType.STOCK_DATA_NUMBER);
 		list.add(parameterInformation);
 
 		return list;

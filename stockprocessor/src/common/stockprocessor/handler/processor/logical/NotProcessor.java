@@ -6,6 +6,7 @@ package stockprocessor.handler.processor.logical;
 import java.util.ArrayList;
 import java.util.List;
 
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 
@@ -45,7 +46,7 @@ public class NotProcessor extends LogicalProcessor
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
 		// logical output
-		ParameterInformation logicalParameterInformation = createParameterInformation("Source", ParameterType.LOGICAL);
+		ParameterInformation logicalParameterInformation = new DefaultParameterInformation("Source", ParameterType.LOGICAL);
 		list.add(logicalParameterInformation);
 
 		return list;

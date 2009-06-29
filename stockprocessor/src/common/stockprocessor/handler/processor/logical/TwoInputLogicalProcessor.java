@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 
@@ -35,9 +36,9 @@ public abstract class TwoInputLogicalProcessor extends LogicalProcessor
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
 		// logical output
-		ParameterInformation logicalParameterInformation1 = createParameterInformation(INPUT_A, ParameterType.LOGICAL);
+		ParameterInformation logicalParameterInformation1 = new DefaultParameterInformation(INPUT_A, ParameterType.LOGICAL);
 		list.add(logicalParameterInformation1);
-		ParameterInformation logicalParameterInformation2 = createParameterInformation(INPUT_B, ParameterType.LOGICAL);
+		ParameterInformation logicalParameterInformation2 = new DefaultParameterInformation(INPUT_B, ParameterType.LOGICAL);
 		list.add(logicalParameterInformation2);
 
 		return list;

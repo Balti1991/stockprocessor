@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.processor.AbstractDataProcessor;
@@ -27,7 +28,7 @@ public abstract class LogicalProcessor extends AbstractDataProcessor<Boolean, Bo
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
 		// logical output
-		ParameterInformation logicalParameterInformation = createParameterInformation(getName(), ParameterType.LOGICAL);
+		ParameterInformation logicalParameterInformation = new DefaultParameterInformation(getName(), ParameterType.LOGICAL);
 		list.add(logicalParameterInformation);
 
 		return list;

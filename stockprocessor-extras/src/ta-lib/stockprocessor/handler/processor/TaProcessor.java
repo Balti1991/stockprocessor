@@ -8,8 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import stockprocessor.data.Candle;
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultListParameterInformation;
+import stockprocessor.data.information.DefaultParameterInformation;
+import stockprocessor.data.information.DefaultRangeParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 
@@ -17,28 +24,36 @@ import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
 import com.tictactec.ta.lib.meta.annotation.FuncInfo;
 import com.tictactec.ta.lib.meta.annotation.InputParameterInfo;
+import com.tictactec.ta.lib.meta.annotation.IntegerList;
+import com.tictactec.ta.lib.meta.annotation.IntegerRange;
 import com.tictactec.ta.lib.meta.annotation.OptInputParameterInfo;
 import com.tictactec.ta.lib.meta.annotation.OutputParameterInfo;
+import com.tictactec.ta.lib.meta.annotation.RealList;
+import com.tictactec.ta.lib.meta.annotation.RealRange;
 
 /**
  * @author anti
  */
 public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?>>
 {
+	/**
+	 * Logger for this class
+	 */
+	private static final Log log = LogFactory.getLog(TaProcessor.class);
+
 	private final CoreMetaData2 coreMetaData;
 
-	private final List<Object> optInputParameters;
+	private List<Object> optInputParameters;
 
 	private int lookback;
 
-	private int dataCount = 0;
+	private int[] dataCount;
 
-	private ShareData<?>[] lookbackQueue = null;
+	private ShareData<?>[][] lookbackQueue = null;
 
-	public TaProcessor(CoreMetaData2 coreMetaData, List<Object> optInputParameters)
+	public TaProcessor(CoreMetaData2 coreMetaData)
 	{
 		this.coreMetaData = coreMetaData;
-		this.optInputParameters = optInputParameters;
 
 		// set lookback
 		updateQueue();
@@ -60,9 +75,29 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 			lookback = 0;
 		}
 
-		// create it if not exists or different
-		if (lookbackQueue == null || lookbackQueue.length != lookback + 1)
-			lookbackQueue = new ShareData[lookback + 1];
+		FuncInfo funcInfo = coreMetaData.getFuncInfo();
+
+		int nbInput = funcInfo.nbInput();
+
+		if (lookbackQueue == null || lookbackQueue.length != nbInput + 1)
+		{
+			dataCount = new int[nbInput];
+			// create main if not exists or different
+			lookbackQueue = new ShareData[nbInput + 1][];
+		}
+
+		for (int i = 0; i < nbInput; i++)
+		{
+			ShareData<?>[] lookbackInput = lookbackQueue[i];
+			// create it if not exists or different
+			if (lookbackInput == null || lookbackInput.length != lookback + 1)
+			{
+				// clear counter
+				dataCount[i] = 0;
+
+				lookbackQueue[i] = new ShareData[lookback + 1];
+			}
+		}
 	}
 
 	/*
@@ -72,8 +107,7 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	@Override
 	public String getDescription()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return coreMetaData.getFuncInfo().hint();
 	}
 
 	/*
@@ -95,40 +129,90 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	@Override
 	public void newDataArrivedNotification(String input, ShareData<?> stockData)
 	{
-		callFunc(stockData);
+		FuncInfo funcInfo = getCoreMetaData().getFuncInfo();
+
+		for (int i = 0; i < funcInfo.nbInput(); i++)
+		{
+			// search for named input
+			if (StringUtils.equals(input, getCoreMetaData().getInputParameterInfo(i).paramName()))
+			{
+				List<Object> result = callFunc(i, stockData);
+
+				// if got result
+				if (result != null)
+					// split & publish
+					for (int j = 0; j < funcInfo.nbOptInput(); j++)
+					{
+						OutputParameterInfo opinfo = getCoreMetaData().getOutputParameterInfo(i);
+
+						// TODO: calculate sum volume
+						ShareData<?> data;
+						switch (opinfo.type())
+						{
+						case TA_Output_Integer:
+						{
+							int[] value = (int[]) result.get(j);
+							data = new ShareData<Integer>(opinfo.paramName(), value[0], stockData.getVolume(), stockData.getTimeStamp());
+							break;
+						}
+						case TA_Output_Real:
+						{
+							double[] value = (double[]) result.get(j);
+							data = new ShareData<Double>(opinfo.paramName(), value[0], stockData.getVolume(), stockData.getTimeStamp());
+							break;
+						}
+
+						default:
+							throw new IllegalArgumentException();
+							// TODO: message
+						}
+
+						publishNewData(opinfo.paramName(), data);
+					}
+			}
+		}
 	}
 
-	public List<Object> callFunc(ShareData<?> stockData)
+	public List<Object> callFunc(int input, ShareData<?> stockData)
 	{
-		FuncInfo funcInfo = coreMetaData.getFuncInfo();
+		FuncInfo funcInfo = getCoreMetaData().getFuncInfo();
 
 		// set opt input
-		setOptionalInputParameters(coreMetaData.getFuncInfo());
+		setOptionalInputParameters(funcInfo);
 
 		updateQueue();
-		int lookbackQueueLength = getLookbackQueue().length;
+
+		int lookbackQueueLength = getLookbackQueue(input).length;
 
 		// roll the queue
 		if (lookbackQueueLength > 1)
-			for (int i = 0; i < lookbackQueueLength - 1; i++)
+			for (int j = 0; j < lookbackQueueLength - 1; j++)
 			{
-				getLookbackQueue()[i] = getLookbackQueue()[i + 1];
+				getLookbackQueue(input)[j] = getLookbackQueue(input)[j + 1];
 			}
 
 		// add new value
-		getLookbackQueue()[lookbackQueueLength - 1] = stockData;
+		getLookbackQueue(input)[lookbackQueueLength - 1] = stockData;
 
 		// check lookback queue size
-		if (dataCount <= lookback)
+		if (dataCount[input] <= lookback)
 		{
 			// count data and dont process it
-			dataCount++;
+			dataCount[input]++;
 
 			return null;
 		}
 
+		// check all queues
+		for (int i = 0; i < dataCount.length; i++)
+		{
+			// if any queues size is less...
+			if (dataCount[i] <= lookback)
+				return null;
+		}
+
 		// set input
-		setInputParameters(funcInfo);
+		setupInputParameters(funcInfo);
 
 		// set output
 		List<Object> outputParameters = setOutputParameters(funcInfo);
@@ -182,9 +266,9 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	/**
 	 * @return the lookbackQueue
 	 */
-	protected ShareData<?>[] getLookbackQueue()
+	protected ShareData<?>[] getLookbackQueue(int i)
 	{
-		return lookbackQueue;
+		return lookbackQueue[i];
 	}
 
 	/***************************************************************************
@@ -232,12 +316,16 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	 */
 	private void setOptionalInputParameters(FuncInfo funcInfo)
 	{
-		if (optInputParameters == null || optInputParameters.size() != funcInfo.nbOptInput())
-			throw new IllegalArgumentException(); // TODO: message
+		// if no changes in default values, create the list
+		if (optInputParameters == null)
+			createDefaultValueList();
 
-		for (int i = 0; i < funcInfo.nbOptInput(); i++)
+		// number of optional parameters
+		int nbOptInput = funcInfo.nbOptInput();
+
+		for (int i = 0; i < nbOptInput; i++)
 		{
-			OptInputParameterInfo info = coreMetaData.getOptInputParameterInfo(i);
+			OptInputParameterInfo info = getCoreMetaData().getOptInputParameterInfo(i);
 
 			switch (info.type())
 			{
@@ -260,7 +348,10 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 		}
 	}
 
-	protected void setInputParameters(FuncInfo funcInfo)
+	/**
+	 * @param funcInfo
+	 */
+	protected void setupInputParameters(FuncInfo funcInfo)
 	{
 		for (int i = 0; i < funcInfo.nbInput(); i++)
 		{
@@ -268,7 +359,7 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 			switch (info.type())
 			{
 			case TA_Input_Price:
-				int length = getLookbackQueue().length;
+				int length = getLookbackQueue(i).length;
 
 				double[] open = new double[length];
 				double[] high = new double[length];
@@ -279,14 +370,14 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 
 				for (int j = 0; j < length; j++)
 				{
-					Candle candle = (Candle) getLookbackQueue()[j].getValue();
+					Candle candle = (Candle) getLookbackQueue(i)[j].getValue();
 
 					open[j] = candle.getOpen();
 					high[j] = candle.getMax();
 					low[j] = candle.getMin();
 					close[j] = candle.getClose();
 
-					volume[j] = getLookbackQueue()[j].getVolume();
+					volume[j] = getLookbackQueue(i)[j].getVolume();
 					interest[j] = 0; // FIXME
 				}
 
@@ -294,11 +385,11 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 				break;
 			case TA_Input_Real:
 			{
-				double[] ds = new double[getLookbackQueue().length];
+				double[] ds = new double[getLookbackQueue(i).length];
 
-				for (int j = 0; j < getLookbackQueue().length; j++)
+				for (int j = 0; j < getLookbackQueue(i).length; j++)
 				{
-					Object value = getLookbackQueue()[j].getValue();
+					Object value = getLookbackQueue(i)[j].getValue();
 
 					if (value instanceof Integer)
 					{
@@ -319,11 +410,11 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 			}
 			case TA_Input_Integer:
 			{
-				int[] ds = new int[getLookbackQueue().length];
+				int[] ds = new int[getLookbackQueue(i).length];
 
-				for (int j = 0; j < getLookbackQueue().length; j++)
+				for (int j = 0; j < getLookbackQueue(i).length; j++)
 				{
-					ds[j] = (Integer) getLookbackQueue()[j].getValue();
+					ds[j] = (Integer) getLookbackQueue(i)[j].getValue();
 				}
 
 				getCoreMetaData().setInputParamInteger(i, ds);
@@ -345,8 +436,23 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation("Input", ParameterType.STOCK_DATA);
-		list.add(parameterInformation);
+		for (int i = 0; i < coreMetaData.getFuncInfo().nbInput(); i++)
+		{
+			InputParameterInfo info = getCoreMetaData().getInputParameterInfo(i);
+			switch (info.type())
+			{
+			case TA_Input_Price:
+				list.add(new DefaultParameterInformation(info.paramName(), ParameterType.STOCK_DATA_CANDLE));
+				break;
+			case TA_Input_Real:
+			case TA_Input_Integer:
+				list.add(new DefaultParameterInformation(info.paramName(), ParameterType.STOCK_DATA_NUMBER));
+				break;
+
+			default:
+				throw new IllegalArgumentException(); // TODO: message
+			}
+		}
 
 		return list;
 	}
@@ -361,6 +467,74 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
+		int nbOptInput = coreMetaData.getFuncInfo().nbOptInput();
+
+		for (int i = 0; i < nbOptInput; i++)
+		{
+			OptInputParameterInfo info = getCoreMetaData().getOptInputParameterInfo(i);
+
+			// create information
+			switch (info.type())
+			{
+			case TA_OptInput_IntegerList:
+			{
+				IntegerList optInputIntegerList = getCoreMetaData().getOptInputIntegerList(i);
+
+				int[] value = optInputIntegerList.value();
+				Integer[] valueList = new Integer[value.length];
+				for (int j = 0; j < value.length; j++)
+				{
+					valueList[i] = value[i];
+				}
+
+				int defaultValue = optInputIntegerList.defaultValue();
+				list.add(new DefaultListParameterInformation<Integer>(info.displayName(), defaultValue, valueList, optInputIntegerList.string()));
+
+				break;
+			}
+			case TA_OptInput_RealList:
+			{
+				RealList optInputRealList = getCoreMetaData().getOptInputRealList(i);
+
+				double[] value = optInputRealList.value();
+				Double[] valueList = new Double[value.length];
+				for (int j = 0; j < value.length; j++)
+				{
+					valueList[i] = value[i];
+				}
+
+				double defaultValue = optInputRealList.defaultValue();
+				list.add(new DefaultListParameterInformation<Double>(info.displayName(), defaultValue, valueList, optInputRealList.string()));
+
+				break;
+			}
+			case TA_OptInput_IntegerRange:
+			{
+				IntegerRange optInputIntegerRange = getCoreMetaData().getOptInputIntegerRange(i);
+
+				int defaultValue = optInputIntegerRange.defaultValue();
+				list.add(new DefaultRangeParameterInformation<Integer>(info.displayName(), defaultValue, optInputIntegerRange.suggested_start(),
+						optInputIntegerRange.suggested_end(), optInputIntegerRange.suggested_increment(), 1));
+
+				break;
+			}
+			case TA_OptInput_RealRange:
+			{
+				RealRange optInputRealRange = getCoreMetaData().getOptInputRealRange(i);
+
+				double defaultValue = optInputRealRange.defaultValue();
+				list.add(new DefaultRangeParameterInformation<Double>(info.displayName(), defaultValue, optInputRealRange.suggested_start(),
+						optInputRealRange.suggested_end(), optInputRealRange.suggested_increment(), 1d));
+				log.info("precision " + optInputRealRange.precision());
+
+				break;
+			}
+
+			default:
+				throw new IllegalArgumentException(); // TODO: message
+			}
+		}
+
 		return list;
 	}
 
@@ -374,8 +548,20 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = createParameterInformation("Output", ParameterType.STOCK_DATA);
-		list.add(parameterInformation);
+		for (int i = 0; i < coreMetaData.getFuncInfo().nbOutput(); i++)
+		{
+			OutputParameterInfo info = getCoreMetaData().getOutputParameterInfo(i);
+			switch (info.type())
+			{
+			case TA_Output_Integer:
+			case TA_Output_Real:
+				list.add(new DefaultParameterInformation(info.paramName(), ParameterType.STOCK_DATA_NUMBER));
+				break;
+
+			default:
+				throw new IllegalArgumentException(); // TODO: message
+			}
+		}
 
 		return list;
 	}
@@ -389,7 +575,96 @@ public class TaProcessor extends AbstractDataProcessor<ShareData<?>, ShareData<?
 	@Override
 	public void setOptionalParameters(Map<String, Object> optionalParameters)
 	{
-		// TODO Auto-generated method stub
+		// reset default values
+		createDefaultValueList();
 
+		// number of optional parameters
+		int nbOptInput = getCoreMetaData().getFuncInfo().nbOptInput();
+
+		for (int i = 0; i < nbOptInput; i++)
+		{
+			OptInputParameterInfo info = getCoreMetaData().getOptInputParameterInfo(i);
+			String displayName = info.displayName();
+
+			if (optionalParameters.containsKey(displayName))
+			{
+				// override the default value
+				Double value = (Double) optionalParameters.get(displayName);
+
+				log.debug("Useing new value: [" + value + "] to parameter: [" + info + "]");
+
+				switch (info.type())
+				{
+				case TA_OptInput_IntegerList:
+					optInputParameters.set(i, new String("" + value));
+					break;
+				case TA_OptInput_IntegerRange:
+					optInputParameters.set(i, value.intValue());
+					break;
+				case TA_OptInput_RealList:
+					optInputParameters.set(i, "" + value);
+					break;
+				case TA_OptInput_RealRange:
+					optInputParameters.set(i, value);
+					break;
+
+				default:
+					throw new IllegalArgumentException(); // TODO: message
+				}
+			}
+		}
+	}
+
+	private void createDefaultValueList()
+	{
+		// create default values list
+		optInputParameters = new ArrayList<Object>();
+
+		int nbOptInput = coreMetaData.getFuncInfo().nbOptInput();
+
+		for (int i = 0; i < nbOptInput; i++)
+		{
+			OptInputParameterInfo info = getCoreMetaData().getOptInputParameterInfo(i);
+
+			// create information
+			switch (info.type())
+			{
+			case TA_OptInput_IntegerList:
+			{
+				IntegerList optInputIntegerList = getCoreMetaData().getOptInputIntegerList(i);
+
+				int defaultValue = optInputIntegerList.defaultValue();
+				optInputParameters.add(defaultValue);
+				break;
+			}
+			case TA_OptInput_RealList:
+			{
+				RealList optInputRealList = getCoreMetaData().getOptInputRealList(i);
+
+				double defaultValue = optInputRealList.defaultValue();
+				optInputParameters.add(defaultValue);
+				break;
+			}
+			case TA_OptInput_IntegerRange:
+			{
+				IntegerRange optInputIntegerRange = getCoreMetaData().getOptInputIntegerRange(i);
+
+				int defaultValue = optInputIntegerRange.defaultValue();
+				optInputParameters.add(defaultValue);
+				break;
+			}
+			case TA_OptInput_RealRange:
+			{
+				RealRange optInputRealRange = getCoreMetaData().getOptInputRealRange(i);
+
+				double defaultValue = optInputRealRange.defaultValue();
+				optInputParameters.add(defaultValue);
+				break;
+			}
+
+			default:
+				throw new IllegalArgumentException(); // TODO: message
+			}
+		}
 	}
 }

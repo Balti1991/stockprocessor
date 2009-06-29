@@ -72,11 +72,11 @@ public class TestTA
 		testTA.stoch2();
 		System.out.println();
 
-		// testTA.SMA1();
-		// System.out.println();
-		//
-		// testTA.SMA2();
-		// System.out.println();
+		testTA.SMA1();
+		System.out.println();
+
+		testTA.SMA2();
+		System.out.println();
 
 		PriceHolder priceHolder = new PriceHolder(inArray, inArray, inArray, inArray, inArray, inArray);
 	}

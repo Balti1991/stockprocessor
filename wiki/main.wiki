@@ -9,5 +9,5 @@ Start page of StockProcessor
 = Details =
 
 Topics:
- * TODO-s
- * roadmap
+ * [RoadMap TODO-s/roadmap]
+ * ChangeLog

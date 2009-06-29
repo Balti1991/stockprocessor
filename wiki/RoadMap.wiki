@@ -8,14 +8,17 @@ This is not exactly a road-map, because the project is in very early state, so w
 
 = TODO =
 
-  * refact handlers to use queue
-  * create the xml reader modul (than can be used manually created xmls)
+  * create the xml reader module (than can be used manually created xmls)
+  * create the xml GUI & saver module 
 
   * migrate _Broker_ object into _[DataHandler#Data_Processor DataProcessor]_
   * fix: chart/element remove window
   * new: chart element types for source types (int, candle, action, etc.) to visualize
     * in progress...
-    * Number, Candle, Action are finished
     * new types/ideas? -new Action with icons
-  * new: broker creator window
-  * new: broker xml save/load function
+
+= Finished TODOs =
+
+  * refact handlers to use queue - DECLINED handlers can use queues only if it is required... commonly they are notified by a simple method with input channels name.
+  * new: chart element types for source types (int, candle, action, etc.) to visualize
+    * Number, Candle, Action are finished

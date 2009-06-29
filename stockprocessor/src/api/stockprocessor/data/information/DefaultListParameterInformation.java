@@ -6,7 +6,7 @@ package stockprocessor.data.information;
 /**
  * @author anti
  */
-public class DefaultListParameterInformation<V extends Number> extends DefaultParamterInformation<V> implements ListParameterInformation<V>
+public class DefaultListParameterInformation<V extends Number> extends DefaultNumberParamterInformation<V> implements ListParameterInformation<V>
 {
 	private final V[] values;
 
@@ -18,22 +18,12 @@ public class DefaultListParameterInformation<V extends Number> extends DefaultPa
 	 * @param values
 	 * @param stringValues
 	 */
-	public DefaultListParameterInformation(V defaultValue, String displayName, V[] values, String[] stringValues)
+	public DefaultListParameterInformation(String displayName, V defaultValue, V[] values, String[] stringValues)
 	{
-		super(displayName, defaultValue);
+		super(displayName, ParameterType.LIST, defaultValue);
 
 		this.values = values;
 		this.stringValues = stringValues;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.data.information.ParameterInformation#type()
-	 */
-	@Override
-	public ParameterType getType()
-	{
-		return ParameterType.LIST;
 	}
 
 	/*

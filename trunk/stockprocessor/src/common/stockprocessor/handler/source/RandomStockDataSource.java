@@ -13,6 +13,7 @@ import stockprocessor.data.ShareData;
 import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.receiver.DataReceiver;
 
 /**
  * @author anti
@@ -27,6 +28,10 @@ public class RandomStockDataSource extends AbstractDataSource<ShareData<Integer>
 
 	private final int dateStep;
 
+	private final ImportTimer importTimer;
+
+	private boolean enabled = false;
+
 	/**
 	 * @param dateStep in seconds
 	 * @param timerStep
@@ -35,14 +40,32 @@ public class RandomStockDataSource extends AbstractDataSource<ShareData<Integer>
 	{
 		this.dateStep = dateStep;
 
-		new ImportTimer(getName(), timerStep)
+		importTimer = new ImportTimer(getName(), timerStep)
 		{
 			@Override
 			protected void timeTick()
 			{
-				publishNewData(INSTRUMENT, generateStockData());
+				if (enabled)
+					publishNewData(INSTRUMENT, generateStockData());
 			}
 		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.source.AbstractDataSource#registerDataReceiver
+	 * (java.lang.String, stockprocessor.handler.receiver.DataReceiver,
+	 * java.lang.String)
+	 */
+	@Override
+	public void registerDataReceiver(String instrument, DataReceiver<ShareData<Integer>> dataReceiver, String input)
+	{
+		// start the generator
+		enabled = true;
+
+		// register receiver
+		super.registerDataReceiver(instrument, dataReceiver, input);
 	}
 
 	protected ShareData<Integer> generateStockData()

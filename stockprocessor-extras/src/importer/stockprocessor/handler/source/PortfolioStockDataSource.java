@@ -23,9 +23,9 @@ import org.apache.commons.lang.time.DateUtils;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.CandleShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
-import stockprocessor.handler.processor.AbstractDataProcessor;
 import stockprocessor.handler.receiver.DataReceiver;
 
 /**
@@ -298,7 +298,7 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 
 		for (String instrument : availableInstruments)
 		{
-			ParameterInformation parameterInformation = AbstractDataProcessor.createParameterInformation(instrument, ParameterType.STOCK_DATA);
+			ParameterInformation parameterInformation = new DefaultParameterInformation(instrument, ParameterType.STOCK_DATA);
 			list.add(parameterInformation);
 		}
 

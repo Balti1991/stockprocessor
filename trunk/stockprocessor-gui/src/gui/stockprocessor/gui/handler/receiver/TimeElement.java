@@ -13,9 +13,9 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
-import stockprocessor.handler.processor.AbstractDataProcessor;
 
 /**
  * @author anti
@@ -43,7 +43,7 @@ public class TimeElement extends BaseElement
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = AbstractDataProcessor.createParameterInformation("Input", ParameterType.STOCK_DATA_INTEGER);
+		ParameterInformation parameterInformation = new DefaultParameterInformation("Input", ParameterType.STOCK_DATA_NUMBER);
 		list.add(parameterInformation);
 
 		return list;
@@ -60,11 +60,11 @@ public class TimeElement extends BaseElement
 	{
 		Object value = stockData.getValue();
 
-		if (value instanceof Integer)
+		if (value instanceof Number)
 		{
 			try
 			{
-				datasetTime.getSeries(0).add(getTimePeriod(stockData), ((Integer) value));
+				datasetTime.getSeries(0).add(getTimePeriod(stockData), ((Number) value));
 			}
 			catch (Exception e)
 			{

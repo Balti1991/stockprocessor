@@ -13,9 +13,9 @@ import org.jfree.data.time.ohlc.OHLCSeriesCollection;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
-import stockprocessor.handler.processor.AbstractDataProcessor;
 
 /**
  * @author anti
@@ -43,7 +43,7 @@ public class CandleElement extends BaseElement
 	{
 		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-		ParameterInformation parameterInformation = AbstractDataProcessor.createParameterInformation("Input", ParameterType.STOCK_DATA_CANDLE);
+		ParameterInformation parameterInformation = new DefaultParameterInformation("Input", ParameterType.STOCK_DATA_CANDLE);
 		list.add(parameterInformation);
 
 		return list;

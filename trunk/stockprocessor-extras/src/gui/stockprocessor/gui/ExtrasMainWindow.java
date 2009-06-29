@@ -3,6 +3,7 @@
  */
 package stockprocessor.gui;
 
+import stockprocessor.handler.processor.TAProcessorManager;
 import stockprocessor.handler.source.EbrokerHtmlStockDataSource;
 import stockprocessor.handler.source.PortfolioStockDataSource;
 
@@ -16,7 +17,7 @@ public class ExtrasMainWindow extends MainWindow
 		super();
 
 		// customization
-		// processorManager.registerProcessorManager(new TAProcessorManager());
+		processorManager.registerProcessorManager(new TAProcessorManager());
 
 		sourceManager.registerStockDataSource(new EbrokerHtmlStockDataSource()); // ebroker
 		sourceManager.registerStockDataSource(new PortfolioStockDataSource()); // portfolio

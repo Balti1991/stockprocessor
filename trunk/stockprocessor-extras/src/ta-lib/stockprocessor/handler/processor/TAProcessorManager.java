@@ -13,16 +13,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stockprocessor.handler.processor.converter.CandleConverter;
-import stockprocessor.handler.receiver.DataReceiver;
-
 import com.tictactec.ta.lib.CoreAnnotated;
 import com.tictactec.ta.lib.RetCode;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
 import com.tictactec.ta.lib.meta.annotation.FuncInfo;
-import com.tictactec.ta.lib.meta.annotation.InputParameterInfo;
-import com.tictactec.ta.lib.meta.annotation.InputParameterType;
-import com.tictactec.ta.lib.meta.annotation.OptInputParameterInfo;
 
 /**
  * @author anti
@@ -122,54 +116,6 @@ public class TAProcessorManager extends ProcessorManager
 		return instance;
 	}
 
-	/**
-	 * @return
-	 */
-	@Deprecated
-	public List<InputParameterInfo> getInputParameterInfo(String name)
-	{
-		CoreMetaData2 instance = getCoreMetaData(name);
-
-		FuncInfo funcInfo = instance.getFuncInfo();
-
-		List<InputParameterInfo> result = new ArrayList<InputParameterInfo>();
-		for (int i = 0; i < funcInfo.nbInput(); i++)
-		{
-			result.add(instance.getInputParameterInfo(i));
-
-			log.debug("nbOptInput: " + i);
-			log.debug("getOptInputParameterInfo: " + instance.getInputParameterInfo(i));
-		}
-
-		return result;
-	}
-
-	/**
-	 * @return
-	 */
-	@Deprecated
-	public List<OptInputParameterInfo> getOptInputParameterInfo(String name)
-	{
-		CoreMetaData2 instance = getCoreMetaData(name);
-
-		FuncInfo funcInfo = instance.getFuncInfo();
-
-		List<OptInputParameterInfo> result = new ArrayList<OptInputParameterInfo>();
-		for (int i = 0; i < funcInfo.nbOptInput(); i++)
-		{
-			result.add(instance.getOptInputParameterInfo(i));
-
-			log.debug("nbOptInput: " + i);
-			log.debug("getOptInputParameterInfo: " + instance.getOptInputParameterInfo(i));
-			log.debug("getOptInputIntegerList: " + instance.getOptInputIntegerList(i));
-			log.debug("getOptInputIntegerRange: " + instance.getOptInputIntegerRange(i));
-			log.debug("getOptInputRealList: " + instance.getOptInputRealList(i));
-			log.debug("getOptInputRealRange: " + instance.getOptInputRealRange(i));
-		}
-
-		return result;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -182,62 +128,20 @@ public class TAProcessorManager extends ProcessorManager
 		// add element
 		CoreMetaData2 coreMetaData = getCoreMetaData(stockDataProcessorName);
 
-		// get parameters
-		List<Object> optInputParameters = getOptionalInputParameters(coreMetaData);
-
-		// String instrument = (String) instrumentComboBox.getSelectedItem();
-
 		// create element
-		TaProcessor element = new TaProcessor(coreMetaData, optInputParameters);
+		TaProcessor element = new TaProcessor(coreMetaData);
 
-		// // get source
-		// StockDataSource stockDataSource = sourceManager.getInstance((String)
-		// sourceComboBox.getSelectedItem());
-
-		if (coreMetaData.getInputParameterInfo(0).type() == InputParameterType.TA_Input_Price)
-		{
-			// candle
-			CandleConverter candleDataCollector = new CandleConverter();
-			candleDataCollector.registerDataReceiver("", (DataReceiver) element, ""); // FIXME
-			return candleDataCollector;
-		}
+		// if (coreMetaData.getInputParameterInfo(0).type() ==
+		// InputParameterType.TA_Input_Price)
+		// {
+		// // candle
+		// CandleConverter candleDataCollector = new CandleConverter();
+		// candleDataCollector.registerDataReceiver("", (DataReceiver) element,
+		// ""); // FIXME
+		// return candleDataCollector;
+		// }
 
 		return element;
 	}
 
-	private List<Object> getOptionalInputParameters(CoreMetaData2 coreMetaData)
-	{
-		FuncInfo funcInfo = coreMetaData.getFuncInfo();
-
-		List<Object> optInputParameters = new ArrayList<Object>();
-
-		for (int i = 0; i < funcInfo.nbOptInput(); i++)
-		{
-			OptInputParameterInfo info = coreMetaData.getOptInputParameterInfo(i);
-			// Component component = parametersPanel.getComponent(i * 2 + 1);
-			//
-			// switch (info.type())
-			// {
-			// case TA_OptInput_IntegerList:
-			// optInputParameters.add(((JComboBox)
-			// component).getSelectedItem());
-			// break;
-			// case TA_OptInput_IntegerRange:
-			// optInputParameters.add(((JSpinner) component).getValue());
-			// break;
-			// case TA_OptInput_RealList:
-			// optInputParameters.add(((JComboBox)
-			// component).getSelectedItem());
-			// break;
-			// case TA_OptInput_RealRange:
-			// optInputParameters.add(((JSpinner) component).getValue());
-			// break;
-			//
-			// default:
-			// throw new IllegalArgumentException(); // TODO: message
-			// }
-		}
-
-		return optInputParameters;
-	}
 }

@@ -13,9 +13,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import stockprocessor.gui.view.ChartHolder;
-import stockprocessor.handler.processor.DefaultProcessorManager;
-import stockprocessor.handler.processor.ProcessorManager;
-import stockprocessor.handler.source.SourceManager;
 
 /**
  * @author anti
@@ -26,25 +23,17 @@ public class MainWindow extends JFrame
 
 	protected ChartHolder chartHolder;
 
-	protected final ProcessorManager processorManager;
-
-	protected final SourceManager sourceManager;
-
 	public MainWindow()
 	{
 		setTitle("Stock GUI");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		chartHolder = new ChartHolder();
-		processorManager = new ProcessorManager();
-		sourceManager = new SourceManager();
 
 		createMenu();
 		add(chartHolder);
 
 		pack();
-
-		processorManager.registerProcessorManager(new DefaultProcessorManager());
 	}
 
 	public static void main(String[] args)
@@ -263,7 +252,7 @@ public class MainWindow extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				AddElementWindow window = new AddElementWindow(chartHolder, processorManager, sourceManager);
+				AddElementWindow window = new AddElementWindow(chartHolder);
 				window.setVisible(true);
 
 				validate();

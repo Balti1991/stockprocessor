@@ -21,12 +21,15 @@ import org.apache.commons.lang.StringUtils;
 import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.receiver.DataReceiver;
+import stockprocessor.manager.InstanceHandler;
 
 /**
  * @author anti
  */
 public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<ShareData<Integer>>
 {
+	public static final String NAME = "www.ebroker.hu";
+
 	protected final static String url = "http://www.ebroker.hu/pls/ebrk/new_arfolyam_html_p.startup";
 
 	protected final HashSet<String> instruments = new HashSet<String>();
@@ -34,6 +37,21 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Shar
 	private final long timerStep = 1000 * 60;
 
 	private boolean timerEnabled = false;
+
+	public static final InstanceHandler<DataSource<?>> instanceHandler = new InstanceHandler<DataSource<?>>()
+	{
+		@Override
+		public DataSource<ShareData<Integer>> getInstance()
+		{
+			return new EbrokerHtmlStockDataSource();
+		}
+
+		@Override
+		public String getName()
+		{
+			return NAME;
+		}
+	};
 
 	public EbrokerHtmlStockDataSource()
 	{
@@ -182,7 +200,7 @@ public class EbrokerHtmlStockDataSource extends AbstractHtmlStockDataSource<Shar
 	@Override
 	public String getName()
 	{
-		return "www.ebroker.hu";
+		return NAME;
 	}
 
 	public static void main(String[] a)

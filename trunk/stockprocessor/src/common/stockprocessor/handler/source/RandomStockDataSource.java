@@ -20,6 +20,8 @@ import stockprocessor.handler.receiver.DataReceiver;
  */
 public class RandomStockDataSource extends AbstractDataSource<ShareData<Integer>>
 {
+	public static final String NAME = "Random data Source";
+
 	public static final String INSTRUMENT = "RND";
 
 	private int lastValue = 10000;
@@ -90,7 +92,7 @@ public class RandomStockDataSource extends AbstractDataSource<ShareData<Integer>
 	@Override
 	public String getName()
 	{
-		return "Random data Source";
+		return NAME;
 	}
 
 	/*

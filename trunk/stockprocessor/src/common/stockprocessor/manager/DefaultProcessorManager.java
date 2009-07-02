@@ -6,6 +6,8 @@ package stockprocessor.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import stockprocessor.handler.processor.DataProcessor;
 import stockprocessor.handler.processor.converter.CandleConverter;
 import stockprocessor.handler.processor.converter.NumberConverter;
@@ -70,6 +72,45 @@ public class DefaultProcessorManager extends AbstractManager<DataProcessor<?, ?>
 		processorManagerList.add(processorManager);
 	}
 
+	public List<String> getAvailableManagers()
+	{
+		List<String> managers = new ArrayList<String>();
+		managers.add(getName());
+
+		for (Manager<DataProcessor<?, ?>> manager : processorManagerList)
+		{
+			managers.add(manager.getName());
+		}
+
+		return managers;
+	}
+
+	public List<String> getAvailableInstances(String dataProcessorName)
+	{
+		// create base list
+		ArrayList<String> list = new ArrayList<String>();
+
+		if (StringUtils.equals(getName(), dataProcessorName))
+		{
+			// add directly registered processors
+			list.addAll(super.getAvailableInstances());
+		}
+		else
+		{
+			// add from external processor managers
+			for (Manager<DataProcessor<?, ?>> processorManager : processorManagerList)
+			{
+				if (StringUtils.equals(processorManager.getName(), dataProcessorName))
+				{
+					list.addAll(processorManager.getAvailableInstances());
+					break;
+				}
+			}
+		}
+		// finish
+		return list;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see stockprocessor.manager.AbstractManager#getAvailableInstances()
@@ -113,6 +154,25 @@ public class DefaultProcessorManager extends AbstractManager<DataProcessor<?, ?>
 			dataProcessor = processorManager.getInstance(dataProcessorName);
 			if (dataProcessor != null)
 				return dataProcessor;
+		}
+
+		// else...
+		return null;// TODO exception
+	}
+
+	public DataProcessor<?, ?> getInstance(String managerName, String dataProcessorName)
+	{
+		if (StringUtils.equals(getName(), managerName))
+		{
+			// get from base list
+			return super.getInstance(dataProcessorName);
+		}
+
+		// else try from external managers
+		for (Manager<DataProcessor<?, ?>> processorManager : processorManagerList)
+		{
+			if (StringUtils.equals(processorManager.getName(), managerName))
+				return processorManager.getInstance(dataProcessorName);
 		}
 
 		// else...

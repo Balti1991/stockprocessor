@@ -43,10 +43,10 @@ import stockprocessor.gui.panel.ProcessorParametersPanel;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
 import stockprocessor.handler.processor.DataProcessor;
-import stockprocessor.handler.processor.ProcessorManager;
 import stockprocessor.handler.receiver.DataReceiver;
 import stockprocessor.handler.source.DataSource;
-import stockprocessor.handler.source.SourceManager;
+import stockprocessor.manager.DefaultProcessorManager;
+import stockprocessor.manager.DefaultSourceManager;
 import stockprocessor.util.Pair;
 
 /**
@@ -60,10 +60,6 @@ public class AddElementWindow extends JDialog
 
 	private final ChartHolder chartHolder;
 
-	private final ProcessorManager processorManager;
-
-	private final SourceManager sourceManager;
-
 	private JList elementsList;
 
 	private ProcessorParametersPanel parametersPanel;
@@ -76,11 +72,9 @@ public class AddElementWindow extends JDialog
 
 	private JTextArea descriptionTextField;
 
-	public AddElementWindow(ChartHolder chartHolder, ProcessorManager processorManager, SourceManager sourceManager)
+	public AddElementWindow(ChartHolder chartHolder)
 	{
 		this.chartHolder = chartHolder;
-		this.processorManager = processorManager;
-		this.sourceManager = sourceManager;
 
 		setTitle("Add a new chart element");
 		setModal(true);
@@ -150,7 +144,7 @@ public class AddElementWindow extends JDialog
 		dataPanel.add(parametersPanel);
 
 		// sources
-		sourcePanel = new DataSourcePanel(sourceManager);
+		sourcePanel = new DataSourcePanel();
 		sourcePanel.addActionListener(new ActionListener()
 		{
 			@Override
@@ -221,7 +215,7 @@ public class AddElementWindow extends JDialog
 	 */
 	protected Object[] getAvailableProcessors()
 	{
-		Object[] processors = processorManager.getAvailableProcessors().toArray();
+		Object[] processors = DefaultProcessorManager.INSTANCE.getAvailableInstances().toArray();
 		Arrays.sort(processors);
 
 		return processors;
@@ -247,7 +241,7 @@ public class AddElementWindow extends JDialog
 		if (isElementSelected)
 		{
 			// create new properties (if required)
-			DataProcessor<?, ?> stockDataProcessor = processorManager.getInstance(elementSelectedValue);
+			DataProcessor<?, ?> stockDataProcessor = DefaultProcessorManager.INSTANCE.getInstance(elementSelectedValue);
 
 			descriptionTextField.setText(stockDataProcessor.getDescription());
 			parametersPanel.setStockDataProcessor(stockDataProcessor);
@@ -271,7 +265,7 @@ public class AddElementWindow extends JDialog
 	private void addElement2Chart()
 	{
 		// create processor
-		DataProcessor<?, ?> stockDataProcessor = processorManager.getInstance((String) elementsList.getSelectedValue());
+		DataProcessor<?, ?> stockDataProcessor = DefaultProcessorManager.INSTANCE.getInstance((String) elementsList.getSelectedValue());
 
 		// apply the parameters
 		stockDataProcessor.setOptionalParameters(parametersPanel.getParameters());
@@ -330,7 +324,7 @@ public class AddElementWindow extends JDialog
 
 			// register the processor
 			@SuppressWarnings("unchecked")
-			DataSource stockDataSource = sourceManager.getInstance(pair.getFirst());
+			DataSource stockDataSource = DefaultSourceManager.INSTANCE.getInstance(pair.getFirst());
 			stockDataSource.registerDataReceiver(pair.getSecond(), stockDataProcessor, inputParameter.getKey());
 		}
 	}

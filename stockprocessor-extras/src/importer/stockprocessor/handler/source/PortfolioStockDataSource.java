@@ -27,6 +27,7 @@ import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.receiver.DataReceiver;
+import stockprocessor.manager.InstanceHandler;
 
 /**
  * http://portfolio.hu/reszveny/adatletoltes.tdp?typ=txt&rv=MTELEKOM
@@ -35,6 +36,8 @@ import stockprocessor.handler.receiver.DataReceiver;
  */
 public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleShareData>
 {
+	public static final String NAME = "PortfolioStockData";
+
 	protected String[] availableInstruments = new String[]
 		{"AAA", "ANY", "BIF", "BNPAGRI0111", "BOOK", "CSEPEL", "DANUBIUS", "ECONET", "EGIS", "EHEP", "ELMU", "EMASZ", "ETFBUXOTP", "EXTERNET",
 				"FEVITAN", "FHB", "FORRAS/OE", "FORRAS/T", "FOTEX", "FREESOFT", "GENESIS", "GSPARK", "HUMET", "KARPOT", "KONZUM", "KPACK", "LINAMAR",
@@ -51,6 +54,21 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	private String instrument = null;
 
 	private int counter;
+
+	public static final InstanceHandler<DataSource<?>> instanceHandler = new InstanceHandler<DataSource<?>>()
+	{
+		@Override
+		public DataSource<CandleShareData> getInstance()
+		{
+			return new PortfolioStockDataSource();
+		}
+
+		@Override
+		public String getName()
+		{
+			return NAME;
+		}
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -123,7 +141,7 @@ public class PortfolioStockDataSource extends AbstractCsvStockDataSource<CandleS
 	@Override
 	public String getName()
 	{
-		return "PortfolioStockData";
+		return NAME;
 	}
 
 	/*

@@ -13,6 +13,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import stockprocessor.manager.AbstractManager;
+
 import com.tictactec.ta.lib.CoreAnnotated;
 import com.tictactec.ta.lib.RetCode;
 import com.tictactec.ta.lib.meta.CoreMetaData2;
@@ -21,7 +23,7 @@ import com.tictactec.ta.lib.meta.annotation.FuncInfo;
 /**
  * @author anti
  */
-public class TAProcessorManager extends ProcessorManager
+public class TAProcessorManager extends AbstractManager<DataProcessor<?, ?>>
 {
 	private static final Log log = LogFactory.getLog(TAProcessorManager.class);
 
@@ -36,7 +38,7 @@ public class TAProcessorManager extends ProcessorManager
 	private transient final String LOOKBACK_SUFFIX = "Lookback";
 
 	@Override
-	public List<String> getAvailableProcessors()
+	public List<String> getAvailableInstances()
 	{
 		List<String> result = new ArrayList<String>();
 		Method[] ms = coreClass.getDeclaredMethods();
@@ -142,6 +144,16 @@ public class TAProcessorManager extends ProcessorManager
 		// }
 
 		return element;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.manager.Manager#getName()
+	 */
+	@Override
+	public String getName()
+	{
+		return "TA-lib Processors";
 	}
 
 }

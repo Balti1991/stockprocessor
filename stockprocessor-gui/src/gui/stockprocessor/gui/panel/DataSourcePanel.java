@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.handler.processor.DataProcessor;
 import stockprocessor.handler.source.DataSource;
-import stockprocessor.handler.source.SourceManager;
+import stockprocessor.manager.DefaultSourceManager;
 import stockprocessor.util.Pair;
 
 /**
@@ -52,7 +52,7 @@ public class DataSourcePanel extends JPanel
 	/**
 	 * 
 	 */
-	public DataSourcePanel(final SourceManager sourceManager)
+	public DataSourcePanel()
 	{
 		setBorder(BorderFactory
 				.createCompoundBorder(BorderFactory.createTitledBorder("Data Source"), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -89,7 +89,7 @@ public class DataSourcePanel extends JPanel
 		JLabel sourceLabel = new JLabel("Source");
 		add(sourceLabel);
 
-		sourceComboBox = new JComboBox(getAvailableSources(sourceManager));
+		sourceComboBox = new JComboBox(getAvailableSources());
 		sourceComboBox.setSelectedIndex(-1);
 		sourceComboBox.setEnabled(false);
 		sourceComboBox.addActionListener(new ActionListener()
@@ -109,7 +109,7 @@ public class DataSourcePanel extends JPanel
 				if (selected)
 				{
 					// get source
-					DataSource<?> stockDataSource = sourceManager.getInstance((String) sourceComboBox.getSelectedItem());
+					DataSource<?> stockDataSource = DefaultSourceManager.INSTANCE.getInstance((String) sourceComboBox.getSelectedItem());
 					for (ParameterInformation parameterInformation : stockDataSource.getOutputParameters())
 					{
 						instrumentComboBox.addItem(parameterInformation.getDisplayName());
@@ -203,9 +203,9 @@ public class DataSourcePanel extends JPanel
 	/**
 	 * @return
 	 */
-	private Object[] getAvailableSources(SourceManager sourceManager)
+	private Object[] getAvailableSources()
 	{
-		Object[] sources = sourceManager.getAvailableSources().toArray();
+		Object[] sources = DefaultSourceManager.INSTANCE.getAvailableInstances().toArray();
 		Arrays.sort(sources);
 
 		return sources;

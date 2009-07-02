@@ -13,7 +13,6 @@ This is not exactly a road-map, because the project is in very early state, so w
 
   * fix library usage:
     * visualize the library of processors on GUI
-    * centralize the management into main project (source, receiver, processor)
   * migrate _Broker_ object into _[DataHandler#Data_Processor DataProcessor]_
   * fix: chart/element remove window
   * new: chart element types for source types (int, candle, action, etc.) to visualize
@@ -25,3 +24,5 @@ This is not exactly a road-map, because the project is in very early state, so w
   * refact handlers to use queue - DECLINED handlers can use queues only if it is required... commonly they are notified by a simple method with input channels name.
   * new: chart element types for source types (int, candle, action, etc.) to visualize
     * Number, Candle, Action are finished
+  * fix library usage:
+    * centralize the management into main project (source, receiver, processor)

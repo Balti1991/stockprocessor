@@ -2,6 +2,9 @@
 #sidebar SideNavigation
 
 =2009.06.29.=
+  * source & processor manager moved to manager
+  * manager uses the InstanceHandler to get new object
+=2009.06.29.=
   * Ta-lib fixed, again works
   * some GUI fixes
   * TwoInputLogicalProcessor for logical processors with two parameters

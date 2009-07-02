@@ -58,11 +58,11 @@ public abstract class TwoInputLogicalProcessor extends LogicalProcessor
 		if (StringUtils.equals(INPUT_B, input))
 			lastB = inputData;
 
-		// wait for both input
+		// wait for both inputs
 		if (lastA == null || lastB == null)
 			return null;
 
-		return calculate(input, lastA, lastB);
+		return calculate(lastA, lastB);
 	}
 
 	/**
@@ -71,5 +71,5 @@ public abstract class TwoInputLogicalProcessor extends LogicalProcessor
 	 * @param inputDataB
 	 * @return
 	 */
-	protected abstract Boolean calculate(String input, Boolean inputDataA, Boolean inputDataB);
+	protected abstract Boolean calculate(Boolean inputDataA, Boolean inputDataB);
 }

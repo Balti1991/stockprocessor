@@ -3,7 +3,6 @@
  */
 package stockprocessor.handler.processor.logical;
 
-
 /**
  * @author anti
  */
@@ -36,7 +35,7 @@ public class OrProcessor extends TwoInputLogicalProcessor
 	 * (java.lang.String, java.lang.Boolean, java.lang.Boolean)
 	 */
 	@Override
-	protected Boolean calculate(String input, Boolean inputDataA, Boolean inputDataB)
+	protected Boolean calculate(Boolean inputDataA, Boolean inputDataB)
 	{
 		return inputDataA && inputDataB;
 	}

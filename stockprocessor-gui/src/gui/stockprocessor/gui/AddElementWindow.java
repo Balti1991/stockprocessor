@@ -3,11 +3,9 @@
  */
 package stockprocessor.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,12 +15,9 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,13 +34,13 @@ import stockprocessor.gui.handler.receiver.Element;
 import stockprocessor.gui.handler.receiver.TimeElement;
 import stockprocessor.gui.panel.ChartSelectorPanel;
 import stockprocessor.gui.panel.DataSourcePanel;
+import stockprocessor.gui.panel.ProcessorLibraryPanel;
 import stockprocessor.gui.panel.ProcessorParametersPanel;
 import stockprocessor.gui.view.Chart;
 import stockprocessor.gui.view.ChartHolder;
 import stockprocessor.handler.processor.DataProcessor;
 import stockprocessor.handler.receiver.DataReceiver;
 import stockprocessor.handler.source.DataSource;
-import stockprocessor.manager.DefaultProcessorManager;
 import stockprocessor.manager.DefaultSourceManager;
 import stockprocessor.util.Pair;
 
@@ -60,7 +55,7 @@ public class AddElementWindow extends JDialog
 
 	private final ChartHolder chartHolder;
 
-	private JList elementsList;
+	private ProcessorLibraryPanel processorLibraryPanel;
 
 	private ProcessorParametersPanel parametersPanel;
 
@@ -99,22 +94,9 @@ public class AddElementWindow extends JDialog
 		// //////////////////////////////////////////////////////////////////////////////////
 		// available elements
 		// //////////////////////////////////////////////////////////////////////////////////
-		JPanel elementsPanel = new JPanel();
-		elementsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), "Elements"));
-		elementsPanel.setLayout(new BorderLayout());
-		mainPane.add(elementsPanel);
-
-		elementsList = new JList();
-		elementsList.setListData(getAvailableProcessors());
-		elementsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		elementsList.addListSelectionListener(new ListSelectionListener()
+		processorLibraryPanel = new ProcessorLibraryPanel();
+		processorLibraryPanel.addActionListener(new ListSelectionListener()
 		{
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * javax.swing.event.ListSelectionListener#valueChanged(javax.swing
-			 * .event.ListSelectionEvent)
-			 */
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
@@ -125,7 +107,7 @@ public class AddElementWindow extends JDialog
 				}
 			}
 		});
-		elementsPanel.add(new JScrollPane(elementsList));
+		mainPane.add(processorLibraryPanel);
 
 		// //////////////////////////////////////////////////////////////////////////////////
 		// data area
@@ -211,22 +193,11 @@ public class AddElementWindow extends JDialog
 	}
 
 	/**
-	 * @return
-	 */
-	protected Object[] getAvailableProcessors()
-	{
-		Object[] processors = DefaultProcessorManager.INSTANCE.getAvailableInstances().toArray();
-		Arrays.sort(processors);
-
-		return processors;
-	}
-
-	/**
 	 * 
 	 */
 	protected void updateButtons()
 	{
-		boolean isElementSelected = elementsList.getSelectedValue() != null;
+		boolean isElementSelected = processorLibraryPanel.getDataProcessor() != null;
 
 		// form buttons
 		// resetButton.setEnabled(isElementSelected);
@@ -235,14 +206,11 @@ public class AddElementWindow extends JDialog
 
 	private void updateProperties()
 	{
-		String elementSelectedValue = (String) elementsList.getSelectedValue();
-		boolean isElementSelected = elementSelectedValue != null;
+		DataProcessor<?, ?> stockDataProcessor = processorLibraryPanel.getDataProcessor();
 
-		if (isElementSelected)
+		if (stockDataProcessor != null)
 		{
 			// create new properties (if required)
-			DataProcessor<?, ?> stockDataProcessor = DefaultProcessorManager.INSTANCE.getInstance(elementSelectedValue);
-
 			descriptionTextField.setText(stockDataProcessor.getDescription());
 			parametersPanel.setStockDataProcessor(stockDataProcessor);
 			sourcePanel.setStockDataProcessor(stockDataProcessor);
@@ -265,7 +233,7 @@ public class AddElementWindow extends JDialog
 	private void addElement2Chart()
 	{
 		// create processor
-		DataProcessor<?, ?> stockDataProcessor = DefaultProcessorManager.INSTANCE.getInstance((String) elementsList.getSelectedValue());
+		DataProcessor<?, ?> stockDataProcessor = processorLibraryPanel.getDataProcessor();
 
 		// apply the parameters
 		stockDataProcessor.setOptionalParameters(parametersPanel.getParameters());

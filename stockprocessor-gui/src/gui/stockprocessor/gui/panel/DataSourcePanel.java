@@ -148,11 +148,13 @@ public class DataSourcePanel extends JPanel
 		parameterMap.clear();
 		parameterInformations.clear();
 		parameterComboBox.removeAllItems();
+		parameterComboBox.setEnabled(false);
 
 		// finish if no processor
 		if (stockDataProcessor == null)
 			return;
 
+		parameterComboBox.setEnabled(true);
 		parameterInformations.addAll(stockDataProcessor.getInputParameters());
 		log.debug("Input ParameterInfoList size:" + parameterInformations.size());
 

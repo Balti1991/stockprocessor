@@ -1,6 +1,20 @@
 #summary Short log of changes in the program
 #sidebar SideNavigation
 
+=2009.07.14.=
+  * big refact to maven compatibility:
+    * project uses maven module structure
+    * sources moved into maven specific /src/main/java location
+    * eclipse project files are created by maven plugin - they are not commited into subversion
+  * spring used for module wiring, useing the jars /config folder:
+    * processors:
+      * must have a _processor-{name}.xml_ with a bean definition
+      * must implement _ProcessorManager_ interface for manager
+    * sources:
+      * must have a _source-{name}.xml_ with a bean definition
+      * must implement _SourceManager_ interface for manager or
+      * must implement _SourceHandler_ interface for handler
+  * finished XML import for custom processors
 =2009.07.02.=
   * source & processor manager moved to manager
   * manager uses the InstanceHandler to get new object

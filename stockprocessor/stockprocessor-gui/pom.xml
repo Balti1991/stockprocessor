@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>stockprocessor</artifactId>
+		<groupId>stockprocessor</groupId>
+		<version>0.0.3-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>stockprocessor</groupId>
+	<artifactId>stockprocessor-gui</artifactId>
+	<name>StockProcessor GUI</name>
+	<version>0.0.3-SNAPSHOT</version>
+	<description>The GUI of StockProcessor</description>
+	<dependencies>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.12</version>
+		</dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.12</version>
+		</dependency>
+		<dependency>
+			<groupId>stockprocessor</groupId>
+			<artifactId>stockprocessor-base</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>stockprocessor</groupId>
+			<artifactId>stockprocessor-extras</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>stockprocessor</groupId>
+			<artifactId>stockprocessor-talib</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>stockprocessor</groupId>
+			<artifactId>stockprocessor-xml</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>

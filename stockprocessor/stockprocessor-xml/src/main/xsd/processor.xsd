@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by Kocsis Antal (Netvisor Kft.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://stockprocessor/handler/xml" targetNamespace="http://stockprocessor/handler/xml" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="processor">
+		<xs:annotation>
+			<xs:documentation>processor object</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element name="input" type="ns1:ConnectorType">
+						<xs:annotation>
+							<xs:documentation>The input of xml processor and the the input sides of inner processors wired to it.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element name="output">
+						<xs:annotation>
+							<xs:documentation>The output of xml processor and the the output sides of inner processors wired to it.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="ns1:ConnectorType">
+									<xs:attribute name="library" type="xs:string"/>
+									<xs:attribute name="type" type="xs:string" use="required"/>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element name="usedProcessors">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:choice>
+									<xs:element name="extrnalProcessor">
+										<xs:complexType>
+											<xs:sequence minOccurs="0" maxOccurs="unbounded">
+												<xs:element name="parameter">
+													<xs:complexType>
+														<xs:attribute name="name"/>
+														<xs:attribute name="value"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="name" type="xs:string" use="required"/>
+											<xs:attribute name="library" type="xs:string"/>
+											<xs:attribute name="type" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element ref="ns1:processor"/>
+								</xs:choice>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element name="innerWire">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="source" type="ns1:WireType">
+									<xs:annotation>
+										<xs:documentation>The source processor or an input from xml processor.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="receiver" type="ns1:WireType">
+									<xs:annotation>
+										<xs:documentation>The receiver processor or an output from xml processor.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="description" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="WireType">
+		<xs:attribute name="processorName" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The name of the target processor, if it is not the currently created.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="taget" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The processors target iconnectors name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="instrument" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ConnectorType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="wire" type="ns1:WireType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="ParameterType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LIST"/>
+			<xs:enumeration value="RANGE"/>
+			<xs:enumeration value="ENUM"/>
+			<xs:enumeration value="LOGICAL"/>
+			<xs:enumeration value="STOCK_ACTION"/>
+			<xs:enumeration value="STOCK_DATA"/>
+			<xs:enumeration value="STOCK_DATA_NUMBER"/>
+			<xs:enumeration value="STOCK_DATA_CANDLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

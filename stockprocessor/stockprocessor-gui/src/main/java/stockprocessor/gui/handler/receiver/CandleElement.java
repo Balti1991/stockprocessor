@@ -20,7 +20,7 @@ import stockprocessor.data.information.ParameterInformation.ParameterType;
 /**
  * @author anti
  */
-public class CandleElement extends BaseElement
+public class CandleElement extends BaseElement<ShareData<?>>
 {
 	private final OHLCSeriesCollection datasetOHLC = new OHLCSeriesCollection();
 

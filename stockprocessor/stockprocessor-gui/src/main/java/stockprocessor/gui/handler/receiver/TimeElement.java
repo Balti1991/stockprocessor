@@ -20,7 +20,7 @@ import stockprocessor.data.information.ParameterInformation.ParameterType;
 /**
  * @author anti
  */
-public class TimeElement extends BaseElement
+public class TimeElement extends BaseElement<ShareData<?>>
 {
 	private final TimeSeriesCollection datasetTime = new TimeSeriesCollection();
 

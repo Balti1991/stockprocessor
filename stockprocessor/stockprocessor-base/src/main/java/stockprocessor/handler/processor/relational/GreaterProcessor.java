@@ -8,6 +8,10 @@ package stockprocessor.handler.processor.relational;
  */
 public class GreaterProcessor extends AbstractRelationalProcessor<Number>
 {
+	public GreaterProcessor()
+	{
+		setName("Greater");
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -31,15 +35,4 @@ public class GreaterProcessor extends AbstractRelationalProcessor<Number>
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.handler.DataHandler#getName()
-	 */
-	@Override
-	public String getName()
-	{
-		return "Greater";
-	}
-
 }

@@ -11,4 +11,10 @@ import stockprocessor.handler.source.DataSource;
  */
 public interface DataProcessor<I, O> extends DataReceiver<I>, DataSource<O>
 {
+	/**
+	 * short name of handler
+	 * 
+	 * @return the name
+	 */
+	public void setName(String name);
 }

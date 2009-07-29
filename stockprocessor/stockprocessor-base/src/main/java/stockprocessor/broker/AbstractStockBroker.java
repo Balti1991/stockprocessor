@@ -5,7 +5,6 @@ package stockprocessor.broker;
 
 import stockprocessor.data.Candle;
 import stockprocessor.data.ShareData;
-import stockprocessor.handler.StockAction;
 
 /**
  * @author anti

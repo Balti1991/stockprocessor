@@ -7,21 +7,25 @@ This is not exactly a road-map, because the project is in very early state, so w
 
 
 = TODO =
-  * recreate full hierarchy for maven compatibility, separate to multiple modules in one project
 
   * create the xml reader module (than can be used manually created xmls)
-  * create the xml GUI & saver module 
+    * reader in progress
+    * handle the optional parameters for inner processors
+      * show on main processor
+      * read values from xml
+  * create the xml creator GUI & saver module 
 
-  * fix library usage:
-    * visualize the library of processors on GUI
   * migrate _Broker_ object into _[DataHandler#Data_Processor DataProcessor]_
   * fix: chart/element remove window
   * new: chart element types for source types (int, candle, action, etc.) to visualize
-    * in progress...
+    * in progress... :)
     * new types/ideas? -new Action with icons
 
 = Finished TODOs =
 
+  * fix library usage:
+    * visualize the library of processors on GUI
+  * recreate full hierarchy for maven compatibility, separate to multiple modules in one project
   * refact handlers to use queue - DECLINED handlers can use queues only if it is required... commonly they are notified by a simple method with input channels name.
   * new: chart element types for source types (int, candle, action, etc.) to visualize
     * Number, Candle, Action are finished

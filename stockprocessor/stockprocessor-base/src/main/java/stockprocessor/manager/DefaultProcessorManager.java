@@ -8,9 +8,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import stockprocessor.handler.InstanceHandler;
 import stockprocessor.handler.processor.DataProcessor;
 import stockprocessor.handler.processor.converter.CandleConverter;
 import stockprocessor.handler.processor.converter.NumberConverter;
+import stockprocessor.handler.processor.converter.StockActionConverter;
 
 /**
  * @author anti
@@ -50,6 +52,21 @@ public class DefaultProcessorManager extends AbstractManager<DataProcessor<?, ?>
 			public String getName()
 			{
 				return NumberConverter.PROCESSOR_NAME;
+			}
+		});
+
+		registerInstanceHandler(new InstanceHandler<DataProcessor<?, ?>>()
+		{
+			@Override
+			public DataProcessor<?, ?> getInstance()
+			{
+				return new StockActionConverter();
+			}
+
+			@Override
+			public String getName()
+			{
+				return StockActionConverter.PROCESSOR_NAME;
 			}
 		});
 	}

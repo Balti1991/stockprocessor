@@ -8,10 +8,13 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:sequence maxOccurs="unbounded">
-					<xs:element name="input" type="ns1:ConnectorType">
+					<xs:element name="input">
 						<xs:annotation>
 							<xs:documentation>The input of xml processor and the the input sides of inner processors wired to it.</xs:documentation>
 						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="name" type="xs:string" use="required"/>
+						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
 				<xs:sequence maxOccurs="unbounded">
@@ -20,12 +23,16 @@
 							<xs:documentation>The output of xml processor and the the output sides of inner processors wired to it.</xs:documentation>
 						</xs:annotation>
 						<xs:complexType>
-							<xs:complexContent>
-								<xs:extension base="ns1:ConnectorType">
-									<xs:attribute name="library" type="xs:string"/>
-									<xs:attribute name="type" type="xs:string" use="required"/>
-								</xs:extension>
-							</xs:complexContent>
+							<xs:attribute name="name" type="xs:string" use="required"/>
+							<xs:attribute name="type" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="StockAction"/>
+										<xs:enumeration value="StockCandle"/>
+										<xs:enumeration value="StockNumber"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
@@ -89,13 +96,6 @@
 				<xs:documentation>The processors target iconnectors name.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="instrument" type="xs:string"/>
-	</xs:complexType>
-	<xs:complexType name="ConnectorType">
-		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="wire" type="ns1:WireType"/>
-		</xs:sequence>
-		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
 	<xs:simpleType name="ParameterType">
 		<xs:restriction base="xs:string">

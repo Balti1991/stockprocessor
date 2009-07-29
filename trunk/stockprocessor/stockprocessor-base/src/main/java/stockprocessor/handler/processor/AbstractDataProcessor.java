@@ -25,10 +25,33 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 		 * .String, java.lang.Object)
 		 */
 		@Override
-		public void publishNewData(String instrument, O data)
+		public void publishNewData(String output, O data)
 		{
-			super.publishNewData(instrument, data);
+			super.publishNewData(output, data);
 		}
+	}
+
+	private String name;
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * stockprocessor.handler.processor.DataProcessor#setName(java.lang.String)
+	 */
+	@Override
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see stockprocessor.handler.DataHandler#getName()
+	 */
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 
 	protected ProcessorDataSource dataSource;
@@ -61,9 +84,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 			}
 
 			@Override
-			public void newDataArrivedNotification(String instrument, I inputData)
+			public void newDataArrivedNotification(String output, I inputData)
 			{
-				AbstractDataProcessor.this.newDataArrivedNotification(instrument, inputData);
+				AbstractDataProcessor.this.newDataArrivedNotification(output, inputData);
 			}
 
 			@Override
@@ -174,9 +197,9 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * .String, stockprocessor.data.handler.DataReceiver)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input)
+	public void registerDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
-		dataSource.registerDataReceiver(instrument, dataReceiver, input);
+		dataSource.registerDataReceiver(output, dataReceiver, input);
 	}
 
 	/*
@@ -186,13 +209,13 @@ public abstract class AbstractDataProcessor<I, O> implements DataProcessor<I, O>
 	 * , stockprocessor.data.handler.DataReceiver)
 	 */
 	@Override
-	public void removeDataReceiver(String instrument, DataReceiver<O> dataReceiver)
+	public void removeDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
-		dataSource.removeDataReceiver(instrument, dataReceiver);
+		dataSource.removeDataReceiver(output, dataReceiver, input);
 	}
 
-	protected void publishNewData(String instrument, O data)
+	protected void publishNewData(String output, O data)
 	{
-		dataSource.publishNewData(instrument, data);
+		dataSource.publishNewData(output, data);
 	}
 }

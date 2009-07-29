@@ -24,18 +24,16 @@ public interface DataSource<O> extends DataHandler
 	/**
 	 * register a stock data processor to the source for future notifications
 	 * 
-	 * @param instrument the instrument code
 	 * @param dataReceiver the data input
 	 * @param input the data receivers input
 	 */
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input);
+	public void registerDataReceiver(String output, DataReceiver<O> dataReceiver, String input);
 
 	/**
 	 * unregister a data processor from future notification
 	 * 
-	 * @param instrument the instrument code, if null deletes from all
-	 *            instruments list
-	 * @param dataReceiver
+	 * @param dataReceiver the data input
+	 * @param input the data receivers input
 	 */
-	public void removeDataReceiver(String instrument, DataReceiver<O> dataReceiver);
+	public void removeDataReceiver(String output, DataReceiver<O> dataReceiver, String input);
 }

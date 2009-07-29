@@ -137,13 +137,13 @@ public abstract class AbstractCsvStockDataSource<SD extends ShareData<?>> extend
 	 * (java.lang.String, hu.bogar.anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<SD> dataReceiver, String input)
+	public void registerDataReceiver(String output, DataReceiver<SD> dataReceiver, String input)
 	{
 		Reader reader = null;
 		try
 		{
 			// read the csv file only once per processor
-			reader = getReader(instrument);
+			reader = getReader(output);
 			readFile(dataReceiver, input, reader, getSeparator());
 		}
 		catch (FileNotFoundException e)

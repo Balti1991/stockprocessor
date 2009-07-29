@@ -21,9 +21,10 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 
 	private List<ParameterInformation> outputParameters = null;
 
+	/**
+	 * the map of outputs to data receivers lists
+	 */
 	private final Map<String, List<Pair<DataReceiver<O>, String>>> dataReceivers = new HashMap<String, List<Pair<DataReceiver<O>, String>>>();
-
-	private final List<Pair<DataReceiver<O>, String>> fullDataReceivers = new ArrayList<Pair<DataReceiver<O>, String>>();
 
 	/*
 	 * (non-Javadoc)
@@ -49,29 +50,16 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 * .anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input)
+	public void registerDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
 		Pair<DataReceiver<O>, String> pair = new Pair<DataReceiver<O>, String>(dataReceiver, input);
-		if (instrument == null)
-		{
-			fullDataReceivers.add(pair);
 
-			if (log.isDebugEnabled())
-			{
-				log
-						.debug("Registered on [" + getName() + "] to full receiver list the data receiver: [" + dataReceiver.getName() + "/" + input
-								+ "]");
-			}
-
-			return;
-		}
-
-		List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(instrument);
+		List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(output);
 
 		if (receivers == null)
 		{
 			receivers = new ArrayList<Pair<DataReceiver<O>, String>>();
-			dataReceivers.put(instrument, receivers);
+			dataReceivers.put(output, receivers);
 		}
 
 		// if not yet on list
@@ -82,8 +70,8 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 
 			if (log.isDebugEnabled())
 			{
-				log.debug("Registered on [" + getName() + "] to [" + instrument + "] receiver list the data receiver: [" + dataReceiver.getName()
-						+ "/" + input + "]");
+				log.debug("Registered on [" + getName() + "] to [" + output + "] receiver list the data receiver: [" + dataReceiver.getName() + "/"
+						+ input + "]");
 			}
 		}
 	}
@@ -95,30 +83,17 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 * .anti.stock.processor.StockDataProcessor)
 	 */
 	@Override
-	public void removeDataReceiver(String instrument, DataReceiver<O> dataReceiver)
+	public void removeDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
-		// FIXME: remove the pair!!!
-		if (instrument == null)
+		// single delete
+		List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(output);
+		if (receivers != null)
 		{
-			// delete from all
-			for (String tmpInstrument : dataReceivers.keySet())
+			// if registered
+			if (receivers.contains(dataReceiver))
 			{
-				removeDataReceiver(tmpInstrument, dataReceiver);
-			}
-			fullDataReceivers.remove(dataReceiver);
-		}
-		else
-		{
-			// single delete
-			List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(instrument);
-			if (receivers != null)
-			{
-				// if registered
-				if (receivers.contains(dataReceiver))
-				{
-					// remove it
-					receivers.remove(dataReceiver);
-				}
+				// remove it
+				receivers.remove(dataReceiver);
 			}
 		}
 	}
@@ -128,16 +103,37 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 * 
 	 * @param data
 	 */
-	protected void publishNewData(String instrument, O data)
+	protected void publishNewData(String output, O data)
 	{
-		// skipp empty data
+		log.debug("New [" + output + "] data from [" + getName() + "]: " + data);
+
+		// skip empty data
 		if (data == null)
 			return;
 
-		log.debug("New data from [" + instrument + "] on [" + getName() + "]:" + data);
+		List<Pair<DataReceiver<O>, String>> receivers = dataReceivers.get(output);
+		// skip if no receivers on output
+		if (receivers == null)
+			return;
 
-		notifyReceivers(fullDataReceivers, data);
-		notifyReceivers(dataReceivers.get(instrument), data);
+		log.debug("Source [" + getName() + "] start to broadcust data: [" + data + "]");
+
+		for (Pair<DataReceiver<O>, String> pair : receivers)
+		{
+			try
+			{
+				log.debug("Source [" + getName() + "]: Notifying processor: [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "]");
+				pair.getFirst().newDataArrivedNotification(pair.getSecond(), data);
+				log.debug("Source [" + getName() + "]: Notified processor: [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "]");
+			}
+			catch (RuntimeException e)
+			{
+				log.warn("Source [" + getName() + "]: error notifying processor [" + pair.getFirst() + "] on input: [" + pair.getSecond()
+						+ "] with data [" + data + "]", e);
+			}
+		}
+
+		log.debug("Receivers notifyed on source [" + getName() + "]");
 	}
 
 	/**
@@ -147,23 +143,5 @@ public abstract class AbstractDataSource<O> implements DataSource<O>
 	 */
 	private void notifyReceivers(List<Pair<DataReceiver<O>, String>> receivers, O data)
 	{
-		if (receivers != null)
-		{
-			log.debug("Source [" + getName() + "] start to broadcust data: [" + data + "]");
-			for (Pair<DataReceiver<O>, String> pair : receivers)
-			{
-				try
-				{
-					pair.getFirst().newDataArrivedNotification(pair.getSecond(), data);
-					log.debug("Notified processor: [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "]");
-				}
-				catch (RuntimeException e)
-				{
-					log.warn("error notifying processor [" + pair.getFirst() + "] on input: [" + pair.getSecond() + "] with data [" + data + "]", e);
-				}
-			}
-
-			log.debug("Receivers notifyed on source [" + getName() + "]");
-		}
 	}
 }

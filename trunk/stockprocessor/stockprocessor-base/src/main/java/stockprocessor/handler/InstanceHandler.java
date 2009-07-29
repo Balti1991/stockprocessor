@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stockprocessor.manager;
+package stockprocessor.handler;
 
 /**
  * @author anti

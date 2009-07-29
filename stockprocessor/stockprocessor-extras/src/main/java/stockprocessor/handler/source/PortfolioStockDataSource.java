@@ -26,8 +26,8 @@ import stockprocessor.data.CandleShareData;
 import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
+import stockprocessor.handler.SourceHandler;
 import stockprocessor.handler.receiver.DataReceiver;
-import stockprocessor.manager.SourceHandler;
 
 /**
  * http://portfolio.hu/reszveny/adatletoltes.tdp?typ=txt&rv=MTELEKOM

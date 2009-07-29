@@ -20,8 +20,8 @@ import org.apache.commons.lang.StringUtils;
 
 import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
+import stockprocessor.handler.SourceHandler;
 import stockprocessor.handler.receiver.DataReceiver;
-import stockprocessor.manager.SourceHandler;
 
 /**
  * @author anti

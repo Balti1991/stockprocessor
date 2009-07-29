@@ -18,7 +18,7 @@ import stockprocessor.handler.receiver.AbstractDataReceiver;
 /**
  * @author anti
  */
-public abstract class BaseElement extends AbstractDataReceiver<ShareData<?>> implements Element
+public abstract class BaseElement<T> extends AbstractDataReceiver<T> implements Element
 {
 	protected final String instrument;
 

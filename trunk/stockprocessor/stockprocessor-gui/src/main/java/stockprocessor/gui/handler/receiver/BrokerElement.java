@@ -5,26 +5,24 @@ package stockprocessor.gui.handler.receiver;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.XYPlot;
 
-import stockprocessor.broker.StockBroker;
+import stockprocessor.broker.StockAction;
 import stockprocessor.data.ShareData;
+import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
-import stockprocessor.handler.StockAction;
-import stockprocessor.handler.receiver.DataReceiver;
+import stockprocessor.data.information.ParameterInformation.ParameterType;
 
 /**
  * @author anti
  */
-public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
+public class BrokerElement extends BaseElement<ShareData<StockAction>>
 {
 	private Boolean longPosition = null;
-
-	private final StockBroker<SD> stockBroker;
 
 	private XYPlot plot = null;
 
@@ -32,17 +30,11 @@ public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 
 	/**
 	 * @param instrument
-	 * @param stockDataReceiver
+	 * @param shareDataReceiver
 	 */
-	public BrokerElement(final StockBroker stockBroker)
+	public BrokerElement(String instrument)
 	{
-		this.stockBroker = stockBroker;
-	}
-
-	@Override
-	public String getName()
-	{
-		return stockBroker.getName();
+		super(instrument);
 	}
 
 	/*
@@ -52,27 +44,25 @@ public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 	 * (java.lang.String, stockprocessor.data.StockData)
 	 */
 	@Override
-	public void newDataArrivedNotification(String input, SD stockData)
+	public void newDataArrivedNotification(String input, ShareData<StockAction> shareData)
 	{
 		// if not on chart skip data
 		if (plot == null)
 			return;
 
-		StockAction stockAction = stockBroker.newDataArrivedNotification(input, stockData);
-
-		switch (stockAction)
+		switch (shareData.getValue())
 		{
 		case BUY:
 			if (longPosition == null)
 			{
 				// create position
 				longPosition = true;
-				createMarker(stockData, Color.GREEN);
+				createMarker(shareData, new Color(0, 255, 0, 150));
 			}
 			else if (longPosition)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTimeStamp().getTime());
+				marker.setEndValue(shareData.getTimeStamp().getTime());
 			}
 			else
 			{
@@ -86,12 +76,12 @@ public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 			{
 				// create position
 				longPosition = false;
-				createMarker(stockData, Color.RED);
+				createMarker(shareData, new Color(255, 0, 0, 150));
 			}
 			else if (!longPosition)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTimeStamp().getTime());
+				marker.setEndValue(shareData.getTimeStamp().getTime());
 			}
 			else
 			{
@@ -106,18 +96,19 @@ public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 			if (longPosition != null)
 			{
 				// move endpoint
-				marker.setEndValue(stockData.getTimeStamp().getTime());
+				marker.setEndValue(shareData.getTimeStamp().getTime());
 			}
 			break;
 		}
 
-		// return stockData;
+		// return shareData;
 	}
 
-	private void createMarker(SD stockData, Paint paint)
+	private void createMarker(ShareData<StockAction> shareData, Paint paint)
 	{
 		// create new marker
-		marker = new IntervalMarker(stockData.getTimeStamp().getTime(), stockData.getTimeStamp().getTime(), paint);
+		long time = shareData.getTimeStamp().getTime();
+		marker = new IntervalMarker(time, time, paint);
 		getPlot().addDomainMarker(marker);
 	}
 
@@ -144,49 +135,17 @@ public class BrokerElement<SD extends ShareData<?>> implements DataReceiver<SD>
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * stockprocessor.data.handler.DataReceiver#getInputParameterInformations()
-	 */
-	@Override
-	public List<ParameterInformation> getInputParameters()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * stockprocessor.data.handler.DataReceiver#getOptionalParameterInformations
+	 * stockprocessor.handler.receiver.AbstractDataReceiver#createInputParameters
 	 * ()
 	 */
 	@Override
-	public List<ParameterInformation> getOptionalParameters()
+	protected List<ParameterInformation> createInputParameters()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+		List<ParameterInformation> list = new ArrayList<ParameterInformation>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * stockprocessor.data.handler.DataReceiver#setOptionalParameterInformations
-	 * (java.util.Map)
-	 */
-	@Override
-	public void setOptionalParameters(Map<String, Object> optionalParameters)
-	{
-		// TODO Auto-generated method stub
+		ParameterInformation parameterInformation = new DefaultParameterInformation("Input", ParameterType.STOCK_ACTION);
+		list.add(parameterInformation);
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.data.handler.DataHandler#getDescription()
-	 */
-	@Override
-	public String getDescription()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		return list;
 	}
 }

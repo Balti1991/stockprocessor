@@ -14,8 +14,8 @@ import javax.swing.JMenuItem;
 
 import stockprocessor.Configuration;
 import stockprocessor.gui.view.ChartHolder;
+import stockprocessor.handler.InstanceHandler;
 import stockprocessor.manager.DefaultProcessorManager;
-import stockprocessor.manager.InstanceHandler;
 import stockprocessor.manager.XmlProcessorManager;
 
 /**

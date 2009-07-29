@@ -24,9 +24,6 @@ import javax.swing.event.ListSelectionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stockprocessor.broker.RandomBroker;
-import stockprocessor.broker.SimpleBrokerHouse;
-import stockprocessor.data.ShareData;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.gui.handler.receiver.BrokerElement;
 import stockprocessor.gui.handler.receiver.CandleElement;
@@ -246,16 +243,17 @@ public class AddElementWindow extends JDialog
 		Element element;
 		for (ParameterInformation outputParameterInformation : stockDataProcessor.getOutputParameters())
 		{
+			String instrument = name + "(" + outputParameterInformation.getDisplayName() + ")";
 			switch (outputParameterInformation.getType())
 			{
-			// case STOCK_ACTION:
-			// element = new BrokerElement<StockData<?>>(); TODO
-			// break;
+			case STOCK_ACTION:
+				element = new BrokerElement(instrument);
+				break;
 			case STOCK_DATA_NUMBER:
-				element = new TimeElement(name + "(" + outputParameterInformation.getDisplayName() + ")");
+				element = new TimeElement(instrument);
 				break;
 			case STOCK_DATA_CANDLE:
-				element = new CandleElement(name + "(" + outputParameterInformation.getDisplayName() + ")");
+				element = new CandleElement(instrument);
 				break;
 
 			default:
@@ -273,16 +271,6 @@ public class AddElementWindow extends JDialog
 			element.setPlot(chart.getPlot());
 			// chart.addElement(element);
 		}
-
-		// FIXME block start
-		RandomBroker stockBroker = new RandomBroker();
-		stockBroker.setBrokerHouse(new SimpleBrokerHouse());
-		BrokerElement<ShareData<?>> brokerElement = new BrokerElement<ShareData<?>>(stockBroker);
-
-		brokerElement.setPlot(chart.getPlot());
-		// stockDataProcessor.registerDataReceiver(null, (DataReceiver)
-		// brokerElement);
-		// FIXME block end
 
 		// register on sources
 		Map<String, Pair<String, String>> inputParameters = sourcePanel.getParameters();

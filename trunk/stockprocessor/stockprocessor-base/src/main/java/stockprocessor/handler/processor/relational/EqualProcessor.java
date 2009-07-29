@@ -8,6 +8,10 @@ package stockprocessor.handler.processor.relational;
  */
 public class EqualProcessor extends AbstractRelationalProcessor<Number>
 {
+	public EqualProcessor()
+	{
+		setName("Equal");
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -31,15 +35,4 @@ public class EqualProcessor extends AbstractRelationalProcessor<Number>
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.handler.DataHandler#getName()
-	 */
-	@Override
-	public String getName()
-	{
-		return "Equal";
-	}
-
 }

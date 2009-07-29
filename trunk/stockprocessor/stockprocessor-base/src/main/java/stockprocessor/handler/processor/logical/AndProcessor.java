@@ -8,14 +8,9 @@ package stockprocessor.handler.processor.logical;
  */
 public class AndProcessor extends TwoInputLogicalProcessor
 {
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.processor.DataProcessor#getName()
-	 */
-	@Override
-	public String getName()
+	public AndProcessor()
 	{
-		return "AND";
+		setName("AND");
 	}
 
 	/*

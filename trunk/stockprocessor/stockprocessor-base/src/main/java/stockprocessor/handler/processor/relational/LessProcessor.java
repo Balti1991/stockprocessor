@@ -8,6 +8,11 @@ package stockprocessor.handler.processor.relational;
  */
 public class LessProcessor extends AbstractRelationalProcessor<Number>
 {
+	public LessProcessor()
+	{
+		setName("Less");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -30,15 +35,4 @@ public class LessProcessor extends AbstractRelationalProcessor<Number>
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.handler.DataHandler#getName()
-	 */
-	@Override
-	public String getName()
-	{
-		return "Less";
-	}
-
 }

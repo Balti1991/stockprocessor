@@ -21,6 +21,11 @@ public class NopProcessor<D> extends AbstractDataProcessor<D, D>
 	 */
 	public static final String OUTPUT = "Output";
 
+	public NopProcessor()
+	{
+		setName("NOP");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -100,15 +105,5 @@ public class NopProcessor<D> extends AbstractDataProcessor<D, D>
 	public String getDescription()
 	{
 		return "Repeats data";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.handler.DataHandler#getName()
-	 */
-	@Override
-	public String getName()
-	{
-		return "NOP";
 	}
 }

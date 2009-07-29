@@ -15,14 +15,9 @@ import stockprocessor.data.information.ParameterInformation.ParameterType;
  */
 public class NotProcessor extends LogicalProcessor
 {
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.processor.DataProcessor#getName()
-	 */
-	@Override
-	public String getName()
+	public NotProcessor()
 	{
-		return "NOT";
+		setName("NOT");
 	}
 
 	/*

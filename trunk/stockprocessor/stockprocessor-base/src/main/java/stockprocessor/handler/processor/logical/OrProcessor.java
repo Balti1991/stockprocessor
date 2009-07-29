@@ -8,14 +8,9 @@ package stockprocessor.handler.processor.logical;
  */
 public class OrProcessor extends TwoInputLogicalProcessor
 {
-	/*
-	 * (non-Javadoc)
-	 * @see stockprocessor.processor.DataProcessor#getName()
-	 */
-	@Override
-	public String getName()
+	public OrProcessor()
 	{
-		return "OR";
+		setName("OR");
 	}
 
 	/*

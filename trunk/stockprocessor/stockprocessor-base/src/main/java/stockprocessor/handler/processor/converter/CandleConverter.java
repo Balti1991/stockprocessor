@@ -59,16 +59,7 @@ public class CandleConverter extends AbstractDataProcessor<ShareData<?>, CandleS
 	 */
 	public CandleConverter()
 	{
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see hu.bogar.anti.stock.processor.AbstractDataProcessor#getName()
-	 */
-	@Override
-	public String getName()
-	{
-		return PROCESSOR_NAME;
+		setName(PROCESSOR_NAME);
 	}
 
 	/*

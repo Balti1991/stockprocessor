@@ -5,6 +5,8 @@ package stockprocessor.manager;
 
 import java.util.List;
 
+import stockprocessor.handler.InstanceHandler;
+
 /**
  * @author anti
  */

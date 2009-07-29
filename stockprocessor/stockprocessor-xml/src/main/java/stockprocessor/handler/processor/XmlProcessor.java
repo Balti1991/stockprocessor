@@ -16,11 +16,12 @@ import stockprocessor.data.information.DefaultParameterInformation;
 import stockprocessor.data.information.ParameterInformation;
 import stockprocessor.data.information.ParameterInformation.ParameterType;
 import stockprocessor.handler.receiver.DataReceiver;
-import stockprocessor.handler.xml.ConnectorType;
 import stockprocessor.handler.xml.WireType;
 import stockprocessor.handler.xml.ProcessorDocument.Processor;
 import stockprocessor.handler.xml.ProcessorDocument.Processor.InnerWire;
+import stockprocessor.handler.xml.ProcessorDocument.Processor.Input;
 import stockprocessor.handler.xml.ProcessorDocument.Processor.Output;
+import stockprocessor.handler.xml.ProcessorDocument.Processor.Output.Type.Enum;
 import stockprocessor.handler.xml.ProcessorDocument.Processor.UsedProcessors.ExtrnalProcessor;
 import stockprocessor.manager.DefaultProcessorManager;
 
@@ -88,6 +89,7 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 			}
 
 			String name = usedProcessor.getName();
+			dataProcessor.setName(name);
 			processors.put(name, dataProcessor);
 		}
 		for (Processor usedProcessor : processor.getUsedProcessors().getProcessorArray())
@@ -95,6 +97,7 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 			DataProcessor<?, ?> dataProcessor = new XmlProcessor(usedProcessor);
 
 			String name = usedProcessor.getName();
+			dataProcessor.setName(name);
 			processors.put(name, dataProcessor);
 		}
 
@@ -102,7 +105,7 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 		inputParameters = new ArrayList<ParameterInformation>();
 		inputProcessors = new HashMap<String, DataProcessor<?, ?>>();
 
-		for (ConnectorType connector : processor.getInputArray())
+		for (Input connector : processor.getInputArray())
 		{
 			// create input information
 			String name = connector.getName();
@@ -111,23 +114,12 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 
 			// create input block
 			DataProcessor<ShareData<?>, ShareData<?>> inputProcessor = new NopProcessor<ShareData<?>>();
+			inputProcessor.setName(name);
 			inputProcessors.put(name, inputProcessor);
 
 			if (log.isInfoEnabled())
 			{
 				log.info("Input created on " + this.name + ", name=" + name); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			// wires from input
-			for (WireType wire : connector.getWireArray())
-			{
-				DataProcessor<?, ?> dataProcessor = processors.get(wire.getProcessorName());
-				inputProcessor.registerDataReceiver(null, (DataReceiver<ShareData<?>>) dataProcessor, wire.getTaget());
-
-				if (log.isInfoEnabled())
-				{
-					log.info("Wire created on " + this.name + "/" + name + " to " + wire.getProcessorName() + "[" + wire.getTaget() + "]");
-				}
 			}
 		}
 
@@ -139,42 +131,22 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 		{
 			String name = connector.getName();
 			// create output block
-			String type = connector.getType();
-			DataProcessor<?, ?> outputProcessor;
-			if (connector.isSetLibrary())
-			{
-				String library = connector.getLibrary();
-				outputProcessor = DefaultProcessorManager.INSTANCE.getInstance(library, type);
-			}
-			else
-			{
-				outputProcessor = DefaultProcessorManager.INSTANCE.getInstance(type);
-			}
+			Enum type = connector.getType();
+			DataProcessor<?, ?> outputProcessor = new NopProcessor<ShareData<?>>();
 
 			// create output information
-			ParameterInformation parameterInformation = outputProcessor.getOutputParameters().get(0);
+			ParameterInformation parameterInformation; // =
+			// outputProcessor.getOutputParameters().get(0);
+			parameterInformation = new DefaultParameterInformation(name, decodeParameterType(type));
 
 			// store
+			outputProcessor.setName(name);
 			outputProcessors.put(name, outputProcessor); // inner
-			outputProcessors.put(parameterInformation.getDisplayName(), outputProcessor); // external
 			outputParameters.add(parameterInformation);
 
 			if (log.isInfoEnabled())
 			{
-				log
-						.info("Output created on " + this.name + ", name=" + name + ", (alias: " + parameterInformation.getDisplayName() + ") using processor " + outputProcessor.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			// wires to output
-			for (WireType wire : connector.getWireArray())
-			{
-				DataProcessor<?, ?> dataProcessor = processors.get(wire.getProcessorName());
-				dataProcessor.registerDataReceiver(null, (DataReceiver) outputProcessor, wire.getTaget());
-
-				if (log.isInfoEnabled())
-				{
-					log.info("Wire created on " + this.name + "/" + name + " to " + wire.getProcessorName() + "[" + wire.getTaget() + "]");
-				}
+				log.info("Output created on " + this.name + ", name=" + name); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -190,24 +162,29 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 			if (receiver.isSetProcessorName())
 				receiverProcessor = processors.get(receiver.getProcessorName());
 			else
+			{
 				// xml processors output is the receiver
 				receiverProcessor = outputProcessors.get(receiverTaget);
+				receiverTaget = "Input";
+			}
 
 			// source
 			WireType source = innerWire.getSource();
+			String sourceTaget = source.getTaget();
 			if (source.isSetProcessorName())
 				sourceProcessor = processors.get(source.getProcessorName());
 			else
-				// xml processors input is the source
-				sourceProcessor = inputProcessors.get(source.getTaget());
+			{
+				sourceProcessor = inputProcessors.get(sourceTaget);
+				sourceTaget = "Output";
+			}
 
-			String instrument = source.getInstrument();
-			sourceProcessor.registerDataReceiver(source.isSetInstrument() ? instrument : null, (DataReceiver) receiverProcessor, receiverTaget);
+			sourceProcessor.registerDataReceiver(sourceTaget, (DataReceiver) receiverProcessor, receiverTaget);
 
 			if (log.isInfoEnabled())
 			{
-				log.info("Wire created from " + sourceProcessor.getName() + "[" + source.getTaget() + "]"
-						+ (source.isSetInstrument() ? "-" + instrument : "") + " to " + receiverProcessor.getName() + "[" + receiverTaget + "]");
+				log.info("Wire created from " + sourceProcessor.getName() + "[" + sourceTaget + "] to " + receiverProcessor.getName() + "["
+						+ receiverTaget + "]");
 			}
 		}
 
@@ -215,6 +192,18 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 		{
 			log.info("Created new XML processor - this.name=" + this.name + ", description=" + description); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+
+	private ParameterType decodeParameterType(Enum type)
+	{
+		if (Output.Type.STOCK_ACTION.equals(type))
+			return ParameterType.STOCK_ACTION;
+		if (Output.Type.STOCK_CANDLE.equals(type))
+			return ParameterType.STOCK_DATA_CANDLE;
+		if (Output.Type.STOCK_NUMBER.equals(type))
+			return ParameterType.STOCK_DATA_NUMBER;
+
+		throw new RuntimeException("Unkonwn parameter type: [" + type + "]");
 	}
 
 	/*
@@ -308,31 +297,17 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public void registerDataReceiver(String instrument, DataReceiver<O> dataReceiver, String input)
+	public void registerDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
-		if (instrument != null)
+		for (ParameterInformation parameterInformation : outputParameters)
 		{
-			DataProcessor dataProcessor = outputProcessors.get(instrument);
-			dataProcessor.registerDataReceiver(instrument, dataReceiver, input);
+			DataProcessor dataProcessor = outputProcessors.get(parameterInformation.getDisplayName());
+			dataProcessor.registerDataReceiver(NopProcessor.OUTPUT, dataReceiver, input);
 
 			if (log.isInfoEnabled())
 			{
 				log
 						.info("XmlProcessor [" + getName() + "] register DataReceiver [" + dataReceiver.getName() + "/" + input + "] on [" + dataProcessor.getName() + "]"); //$NON-NLS-1$
-			}
-		}
-		else
-		{
-			for (ParameterInformation parameterInformation : outputParameters)
-			{
-				DataProcessor dataProcessor = outputProcessors.get(parameterInformation.getDisplayName());
-				dataProcessor.registerDataReceiver(instrument, dataReceiver, input);
-
-				if (log.isInfoEnabled())
-				{
-					log
-							.info("XmlProcessor [" + getName() + "] register DataReceiver [" + dataReceiver.getName() + "/" + input + "] on [" + dataProcessor.getName() + "]"); //$NON-NLS-1$
-				}
 			}
 		}
 	}
@@ -345,19 +320,11 @@ public class XmlProcessor<I, O> extends AbstractDataProcessor<I, O>
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public void removeDataReceiver(String instrument, DataReceiver<O> dataReceiver)
+	public void removeDataReceiver(String output, DataReceiver<O> dataReceiver, String input)
 	{
-		if (instrument != null)
+		for (DataProcessor dataProcessor : outputProcessors.values())
 		{
-			DataProcessor dataProcessor = outputProcessors.get(instrument);
-			dataProcessor.removeDataReceiver(instrument, dataReceiver);
-		}
-		else
-		{
-			for (DataProcessor dataProcessor : outputProcessors.values())
-			{
-				dataProcessor.removeDataReceiver(instrument, dataReceiver);
-			}
+			dataProcessor.removeDataReceiver(output, dataReceiver, input);
 		}
 	}
 }

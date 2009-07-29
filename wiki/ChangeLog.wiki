@@ -2,6 +2,12 @@
 #sidebar SideNavigation
 
 =2009.07.14.=
+  * using outputs name in sources insted of instrument
+  * some classes moved to new place
+  * fixed the xml import:
+    * removed the wires from input-outputs
+    * the used processor get their alias names from xml (renameing them)
+=2009.07.14.=
   * big refact to maven compatibility:
     * project uses maven module structure
     * sources moved into maven specific /src/main/java location

@@ -13,9 +13,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.xmlbeans.XmlException;
 
+import stockprocessor.handler.InstanceHandler;
 import stockprocessor.handler.processor.XmlProcessor;
 import stockprocessor.handler.xml.ProcessorDocument;
-import stockprocessor.manager.InstanceHandler;
 
 /**
  * c:\Work\Workspace\stockprocessor\stockprocessor-xml\src\main\xsd\
@@ -32,8 +32,7 @@ public class LoadXmlProcessorWindow extends JFileChooser
 		// common properties
 		setFileSelectionMode(JFileChooser.FILES_ONLY);
 		setMultiSelectionEnabled(false);
-		// setCurrentDirectory(new File("~/XmlProcessors"));
-		setCurrentDirectory(new File("c:/Work/Workspace/stockprocessor/stockprocessor-xml/src/main/xsd/"));
+		setCurrentDirectory(new File("~/XmlProcessors"));
 
 		// file filters
 		addChoosableFileFilter(new FileNameExtensionFilter("XML files", "xml"));

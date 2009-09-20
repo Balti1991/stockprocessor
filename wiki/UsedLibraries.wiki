@@ -1,0 +1,20 @@
+#summary The short list of used main importable libraries in the program.
+
+=Introduction=
+
+The development of the program is based on existing libraries.
+The libraries are:
+ * Ta-lib
+ * JFreeChart
+
+=TA-Lib : Technical Analysis Library=
+
+"TA-Lib is widely used by trading software developers requiring to perform technical analysis of financial market data."
+
+Homepage: http://ta-lib.org/
+
+=JFreeChart=
+
+"JFreeChart is a free 100% Java chart library that makes it easy for developers to display professional quality charts in their applications."
+
+Homepage: http://www.jfree.org/jfreechart/

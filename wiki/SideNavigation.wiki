@@ -2,4 +2,5 @@
   * [StockProcessor StockProcessor]
     * [DataHandler DataHandler classes]
   * [ChangeLog Change-log]
+  * [UsedLibraries Used Libraries]
   * [RoadMap Road Map]

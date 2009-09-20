@@ -1,4 +1,5 @@
 #summary The short list of used main importable libraries in the program.
+#sidebar SideNavigation
 
 =Introduction=
 

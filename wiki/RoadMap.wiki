@@ -20,6 +20,19 @@ This is not exactly a road-map, because the project is in very early state, so w
   * new: chart element types for source types (int, candle, action, etc.) to visualize
     * in progress... :)
     * new types/ideas? -new Action with icons
+  * multi level signals:
+    * Strong Buy
+    * Buy
+    * none
+    * Sell
+    * Strong Sell
+  * new view on position handler:
+    * 4 lines:
+      * Open Long
+      * Close Long
+      * Open short
+      * Close Short
+    * no need to change the XML format...
 
 = Finished TODOs =
 

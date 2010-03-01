@@ -62,7 +62,7 @@ public class MovingEvaluator extends AbstractEvaluatorProcessor
 	 * #calculate(java.lang.String, stockprocessor.data.ShareData)
 	 */
 	@Override
-	protected StockAction calculate(String input, ShareData<?> inputData)
+	protected ShareData<StockAction> calculate(String input, ShareData<?> inputData)
 	{
 		// TODO Auto-generated method stub
 		return null;

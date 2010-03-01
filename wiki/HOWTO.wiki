@@ -1,4 +1,5 @@
 #summary HOWTO
+#sidebar SideNavigation
 
 = Building the project from SVN source =
 == Requirements ==
